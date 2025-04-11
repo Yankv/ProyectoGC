@@ -1,0 +1,187 @@
+﻿@using LogicaNegocio.Servicios
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@model LogicaNegocio.Models.Usuario
+@{
+    ViewData["Title"] = "Gestionar usuario";
+    string permisos = HttpContextAccessor.HttpContext.Session.GetString("permisos");
+}
+
+<head>
+</head>
+
+<body>
+    <div class="container mt-4 mb-4">
+        <div class="row mt-4">
+            <h2 class="fs-1" style="color: black">Gestión de Usuarios</h2>
+        </div>
+        <div class="container mt-3">
+            <div class="row">
+                <div class="d-flex p-2 justify-content-end">
+                    <div class="mt-2 d-flex">
+                        <form asp-controller="Usuario" asp-action="Gestionar" method="post">
+                            <div class="col-3 input-group">
+                                <span class="input-group-text">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                         class="bi bi-search" viewBox="0 0 16 16">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
+                                        </path>
+                                    </svg>
+                                </span>
+                                <input type="search" class="form-control" placeholder="Buscar usuario"
+                                       aria-label="Input group example" aria-describedby="basic-addon1" name="iduser" />
+                            </div>
+                        </form>
+                        <div class="col-4 ml-2">
+                            <a class="btn btn-primary" asp-controller="Usuario" asp-action="Gestionar">Ver todos</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <fieldset class="container" style="height: 25rem; overflow-y: scroll">
+                    <table class="table table-striped table-hover text-center">
+                        <thead>
+                            <tr>
+                                <th scope="col">N° documento</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Apellido</th>
+                                <th scope="col">Teléfono</th>
+                                <th scope="col">Correo</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Tipo de documento</th>
+                                <th scope="col">Rol</th>
+                                @if (RolPermisos.TienePermiso("Editar usuarios", permisos))
+                                {
+                                    <th scope="col">Editar</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in ViewBag.Usuarios)
+                            {
+                                <tr>
+                                    <th scope="col">@item.Numero_doc</th>
+                                    <td>@item.Nombre</td>
+                                    <td>@item.Apellido</td>
+                                    <td>@item.Telefono</td>
+                                    <td>@item.Correo</td>
+                                    <td>@item.Estado</td>
+                                    <td>@item.FK_tp_documento.Nombre</td>
+                                    <td>@item.FK_rol.Nombre</td>
+                                    @if (RolPermisos.TienePermiso("Editar usuarios", permisos))
+                                    {
+                                        <td>
+                                            <button type="button" class="btn editar" data-bs-toggle="modal" data-bs-target="#editarModal" data-id="@item.Numero_doc">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                     class="bi bi-pencil-square" viewBox="0 0 16 16" style="color: black">
+                                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                                    <path fill-rule="evenodd"
+                                                          d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                                                </svg>
+                                            </button>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </fieldset>
+            </div>
+            @if (RolPermisos.TienePermiso("Reporte usuarios", permisos))
+            {
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center margen">
+                    @using (Html.BeginForm("ExportarReporteUsuario", "Usuario", FormMethod.Post))
+                    {
+                        <br />
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center margen">
+                            <input name="btnExportar" type="submit" class="btn btn-danger fw-bolder me-md-2 btn-pdf" value="Generar reporte (PDF)" />
+                            <input name="btnExportar" type="submit" class="btn btn-success fw-bolder me-md-2 btn-excel" value="Generar reporte (EXCEL)" />
+
+                        </div>
+                        <br />
+                    }
+                </div>
+            }
+            @if (RolPermisos.TienePermiso("Editar usuarios", permisos))
+            {
+                <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header text-center">
+                                <h5 class="modal-title fw-bolder" id="exampleModalLabel">
+                                    Editar Usuario:
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form id="formEditar" asp-controller="Usuario" asp-action="ActualizarRolEstado" method="post">
+                                <div class="modal-body">
+                                    <div class="container">
+                                        <div class="row justify-content-center align-content-center">
+                                            <div class="col">
+                                                <input type="hidden" id="idUsuario" name="Numero_doc" value="">
+                                                <h5 class="label mb-2">Estado</h5>
+                                                <div class="mb-3">
+                                                    <select class="form-select" size="3" aria-label="size 3 select example" id="estadoSelect" name="Estado">
+                                                        <option value="Activo">Activo</option>
+                                                        <option value="Inactivo">Inactivo</option>
+                                                        <option value="Suspendido">Suspendido</option>
+                                                    </select>
+                                                </div>
+                                                <h5 class="label mb-2">Rol</h5>
+                                                <div class="mb-3">
+                                                    <select class="form-select" size="3" aria-label="size 3 select example" id="rolSelect" name="FK_rol.PK_rol">
+                                                        @foreach (var rol in ViewBag.Roles)
+                                                        {
+                                                            <option value="@rol.PK_rol">@rol.Nombre</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer justify-content-center align-content-center">
+                                    <div class="d-flex justify-content-between">
+                                        <button type="button" class="btn btn-secondary fw-bolder w-50 m-1" data-bs-dismiss="modal" aria-label="Close">
+                                            Cancelar
+                                        </button>
+                                        <button type="submit" class="btn btn-success fw-bolder w-50 m-1" onclick="actualizarUsuario()">
+                                            Guardar Cambios
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @if (RolPermisos.TienePermiso("Editar usuarios", permisos))
+    {
+        <script>
+            var userId;
+            $('.editar').on('click', function () {
+                userId = $(this).data('id');
+                $.ajax({
+                    url: '/Usuario/ObtenerUser',
+                    type: 'GET',
+                    data: { id: userId },
+                    success: function (data) {
+                        $('#exampleModalLabel').text('Editar Usuario: ' + data.nombre);
+                        $('#estadoSelect').val(data.estado);
+                        $('#rolSelect').val(data.fK_rol.pK_rol);
+                        $('#idUsuario').val(userId);
+                        // $('#editarModal').modal('show');
+                    },
+                    error: function () {
+                    }
+                });
+            });
+        </script>
+    }
+
+</body>

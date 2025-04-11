@@ -1,0 +1,156 @@
+﻿@model LogicaNegocio.Models.Usuario;
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+    <title>Registro</title>
+</head>
+
+<body class="bg-light d-flex justify-content-center align-items-center vh-100">
+    <div class="row bg-white p-5 rounded-5 text-secondary shadow align-items-center" style="width: 70rem">
+        <div class="col-5 text-center align-items-start">
+            <img src="~/css/IMG/logo.png" alt="" srcset="" style="width: 380px" />
+        </div>
+        <div class="col justify-content-center mb-2">
+            <div class="text-center m-3">
+                <h1 class="fs-1 fw-bold" style="color: black">Registro de Usuario</h1>
+            </div>
+            <form class="row needs-validation" id="resgistro" novalidate asp-controller="Usuario" asp-action="Registro" method="post">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="nombres">Nombres:</label>
+                            @Html.TextBoxFor(u => u.Nombre, new { @class = "form-control", required = "required", maxlength = "50"})
+                            <div class="invalid-feedback">Nombre necesario</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="apellidos">Apellidos:</label>
+                            @Html.TextBoxFor(u => u.Apellido, new { @class = "form-control", required = "required", maxlength = "50"})
+                            <div class="invalid-feedback">Apellido necesario</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="tipoDocumento">Tipo de Documento:</label>
+                            @Html.DropDownListFor(u => u.FK_tp_documento.Pk_tipo_doc, new SelectList(
+                            new[]
+                            {
+                            new { Value = 1, Text = "Cedula de ciudadania" },
+                            new { Value = 2, Text = "Targeta de identidad" },
+                            new { Value = 3, Text = "Targeta extrangera" }
+                            }, "Value", "Text"), "Seleccione un tipo de documento", new { @class = "form-select", required = "required" })
+                            <div class="invalid-feedback">Seleccione tipo de Documento</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="numeroDocumento">Número de Documento:</label>
+                            @Html.TextBoxFor(u => u.Numero_doc, new { @class = "form-control", @pattern="[0-9]+", required = "required"})
+                            <div class="invalid-feedback">Documento invalido</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="correo">Correo Electrónico:</label>
+                            @Html.TextBoxFor(u => u.Correo, new { @class = "form-control", @type="email", required = "required", maxlength = "50"})
+                            <div class="invalid-feedback">Ingrese un correo valido</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="telefono">Teléfono:</label>
+                            @Html.TextBoxFor(u => u.Telefono, new { @class = "form-control", @pattern="[0-9]+", required = "required"})
+                            <div class="invalid-feedback">Telefono invalido</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="contrasena">Contraseña:</label>
+                            @Html.TextBoxFor(u => u.Contrasenia, new { @class = "form-control", @type="password", @id = "contrasenia", required = "required", maxlength = "50"})
+                            <div class="invalid-feedback">Contraseña necesaria</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="validar">Validar Contraseña:</label>
+                            <input type="password" class="form-control" id="validar" name="validar" maxlength="50" required />
+                            <div class="invalid-feedback">Campo necesario</div>
+                        </div>
+                    </div>
+                    @if (ViewBag.Mensaje != null)
+                    {
+                        <div class="alert alert-danger justify-content-center text-center mt-1">
+                            @ViewBag.Mensaje
+                        </div>
+                    }
+                </div>
+                <div class="row justify-content-center mt-4">
+                    <button type="submit" class="btn btn-primary fw-bolder col-6">
+                        Registrarme
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             class="bi bi-person-plus-fill" viewBox="0 0 16 16">
+                            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                            <path fill-rule="evenodd"
+                                  d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z" />
+                        </svg>
+                    </button>
+                </div>
+                @if (ViewBag.Error != null)
+                {
+                    <script>
+                        var mensaje = "@ViewBag.Error";
+                        alert(mensaje);
+                    </script>
+                }
+            </form>
+            <div class="row mt-2">
+                <div class="row d-flex justify-content-center">
+                    <div class="col fw-bolder text-end pt-2">
+                        <div>¿Ya tienes cuenta?</div>
+                    </div>
+                    <div class="col text-start">
+                        <div class="pt-2">
+                            <a class="fw-semibold fst-italic" style="font-size: 0.9rem" asp-controller="Login"
+                               asp-action="Login">
+                                Inicia sesion aqui
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center mt-3">
+                    <a class="btn btn-primary fw-bolder col-6" asp-controller="Home" asp-action="Principal">
+                        Regresar al Inicio
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             class="bi bi-house-fill" viewBox="0 0 16 16">
+                            <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5Z" />
+                            <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6Z" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/js/formulario.js" asp-append-version="true"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+</body>
+
+</html>

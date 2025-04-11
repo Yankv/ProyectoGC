@@ -1,0 +1,68 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Restablecer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body>
+    <div class="row justify-content-center mt-5">
+
+        <div class="col-5">
+
+            <div class="card">
+                <div class="card-header"><h3 class="text-center">Restablecer cuenta</h3></div>
+                <div class="card-body">
+                    @if (ViewBag.Restablecido == null)
+                    {
+                        <form action="@Url.Action("Restablecer","Login")" method="post">
+                            <p>Ingrese su dirección de correo electrónico y le enviaremos un enlace para restablecer su contraseña.</p>
+
+                            <div class="mb-3">
+                                <label>Correo</label>
+                                <input type="email" class="form-control" name="correo" value="@(ViewBag.Correo !=null ? ViewBag.Correo : "")" required />
+                            </div>
+
+                            @if (ViewBag.Mensaje != null)
+                            {
+                                <div class="alert alert-danger">
+                                    @ViewBag.Mensaje
+                                </div>
+                            }
+
+                            <div class="mb-3">
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" type="submit">Restablecer</button>
+                                    <a class="btn btn-link"asp-controller="Login" asp-action="Login">Volver</a>
+                                </div>
+                            </div>
+
+
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="alert alert-success">
+                            <p>Su contraseña fue restablecida, le enviamos un mensaje su correo para restablecer.</p>
+                            <a class="btn btn-success" asp-controller="Login" asp-action="Login">Ingresar</a>
+                        </div>
+                    }
+
+
+
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+</body>
+</html>

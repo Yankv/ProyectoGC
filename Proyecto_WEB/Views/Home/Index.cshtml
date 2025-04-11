@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Inicio";
+}
+
+<head>
+
+</head>
+
+<body>
+    <div>
+        <div class="row bg-white rounded-5">
+            <section>
+                <div class="text-center align-items-center">
+                    <img src="~/css/IMG/logo.png" alt="">
+                </div>
+                <div class="text-center align-items-center">
+                    <h1 class="fs-1 fw-bold">@ViewBag.InfoEmpresa.Nombre</h1>
+                </div>
+                <div class="text-center align-items-center">
+                    <p class="h5">@ViewBag.InfoEmpresa.Descripcion </p>
+                </div>
+                <div class="text-center align-items-center">
+                    <p class="h5">Contactanos: @ViewBag.InfoEmpresa.Correo  @ViewBag.InfoEmpresa.Telefono</p>
+                </div>
+                <div class="text-center align-items-center">
+                    <p class="h5">Estamos ubicados en: @ViewBag.InfoEmpresa.Direccion</p>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>

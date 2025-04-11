@@ -1,0 +1,140 @@
+﻿@using LogicaNegocio.Models;
+@{
+    ViewData["Title"] = "Reservar";
+}
+
+<head>
+
+</head>
+
+<body>
+    @if (ViewBag.Error == null)
+    {
+        <div class="container mb-4">
+            <div class="row mt-4 mb-2">
+                <h2 class="fs-1" style="color: black">Realizar reserva</h2>
+            </div>
+            @using (Html.BeginForm("Reservar", "Reserva", FormMethod.Post, new { @class = "needs-validation", @novalidate = "novalidate" }))
+            {
+                <article class="row justify-content-center border border-opacity-25 p-4 mb-3">
+                    <div class="col-md-12 mb-3">
+                        <h5 class="label">Seleccione el recurso a reservar</h5>
+                        <select name="Recurso" class="form-select" aria-label="Default select example" required>
+                            <option value="" disabled selected>Seleccione</option>
+                            @foreach (var rec in ViewBag.Recursos)
+                            {
+                                @if (ViewBag.Filtro?.Recurso == rec.Pk_recurso)
+                                {
+                                    <option value="@rec.Pk_recurso" selected>@rec.Nombre</option>
+                                }
+                                else
+                                {
+                                    <option value="@rec.Pk_recurso">@rec.Nombre</option>
+                                }
+                            }
+                        </select>
+                        <div class="invalid-feedback">Recurso necesario</div>
+                    </div>
+                    <div class="col-md-3">
+                        <h5 class="label">Fecha de inicio</h5>
+                        <div class="input-group mb-3">
+                            <input type="date" class="form-control" id="fechaInicio" name="FechaInicio" value="@ViewBag.Filtro?.FechaInicio.ToString("yyyy-MM-dd")" required />
+                            <div class="invalid-feedback">Fecha necesaria</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <h5 class="label">Fecha de fin</h5>
+                        <div class="input-group mb-3">
+                            <input type="date" class="form-control" id="fechaFin" name="FechaFin" value="@ViewBag.Filtro?.FechaFin.ToString("yyyy-MM-dd")" required />
+                            <div class="invalid-feedback">Fecha necesaria</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <h5 class="label">Hora inicio</h5>
+                        <input type="time" class="form-control" name="HoraInicio" required />
+                        <div class="invalid-feedback">Hora necesaria</div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <h5 class="label">Hora fin</h5>
+                        <input type="time" class="form-control" name="HoraFin" required />
+                        <div class="invalid-feedback">Hora necesaria</div>
+                    </div>
+                    <div class="col-md-4 mx-auto mt-2">
+                        <button type="submit" class="btn btn-primary fw-bolder w-100">
+                            Consultar Disponibilidad
+                        </button>
+                    </div>
+                </article>
+            }
+            <article class="row mt-4">
+                <fieldset class="container" style="height: 22rem; overflow-y: scroll">
+                    <table class="table table-striped table-hover text-center">
+                        <thead>
+                            <tr>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Hora</th>
+                                <th scope="col">Costo</th>
+                                <th scope="col">Reservar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (ViewBag.Horarios != null)
+                            {
+                                @foreach (var hor in ViewBag.Horarios)
+                                {
+                                    <tr>
+                                        <td>@hor.Fecha.ToShortDateString()</td>
+                                        <td>@hor.Hora_inicio</td>
+                                        <td>@hor.Costo</td>
+                                        <td>
+                                            <form asp-action="Crear_reserva" asp-route-id="@hor.Pk_horario" method="post" onsubmit="return confirmarReserva()">
+                                                <button type="submit" class="centered-content-btn btn btn-outline-primary fw-bolder">
+                                                    Reservar
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                         class="bi bi-calendar-check" viewBox="0 0 16 16">
+                                                        <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
+                                                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                            <td colspan="4">¡No hay disponibilidad en esas fechas y horas!</td>
+                            }
+                        </tbody>
+                    </table>
+                </fieldset>
+            </article>
+        </div>
+        <script>
+            var fechaIni = document.getElementById('fechaInicio');
+            var fechaF = document.getElementById('fechaFin');
+
+            const fechaActual = new Date().toISOString().split('T')[0];
+            fechaIni.min = fechaActual;
+            fechaF.min = fechaActual;
+
+            fechaIni.addEventListener('input', function () {
+                fechaF.min = fechaIni.value;
+            });
+        </script>
+        <script>
+            function confirmarReserva() {
+                var respuesta = confirm("¿Estás seguro de que quieres reservar este horario?");
+                return respuesta;
+            }
+        </script>
+    }
+    else
+    {
+        <div class="d-flex justify-content-center mt-4">
+            <div class="alert alert-danger" role="alert">
+                @ViewBag.Error
+            </div>
+        </div>
+    }
+</body>

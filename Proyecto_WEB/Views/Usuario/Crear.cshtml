@@ -1,0 +1,87 @@
+﻿@model LogicaNegocio.Models.Usuario;
+@{
+    ViewData["Title"] = "Crear Usuario";
+}
+
+<body>
+    <div class="container mb-4">
+        <div class="row mt-4 text-center border border-dark p-3">
+            <h2 class="fs-1" style="color: black">Crear Usuario</h2>
+        </div>
+        <form class="row needs-validation border border-dark p-4 " novalidate asp-controller="Usuario" asp-action="Crear" method="post">
+            <div class="col-md-6 mb-3">
+                <label for="validationCustom01" class="form-label">Nombres</label>
+                @Html.TextBoxFor(u => u.Nombre, new { @class = "form-control", required = "required", maxlength = "50"})
+                <div class="invalid-feedback">
+                    Nombre necesario.
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label for="validationCustom02" class="form-label">Apellidos</label>
+                @Html.TextBoxFor(u => u.Apellido, new { @class = "form-control", required = "required", maxlength = "50"})
+                <div class="invalid-feedback">
+                    Apellido necesario.
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="validationCustom04" class="form-label">Tipo de documento</label>
+                @Html.DropDownListFor(u => u.FK_tp_documento.Pk_tipo_doc, new SelectList(
+                new[]
+                {
+                new { Value = 1, Text = "Cedula de ciudadania" },
+                new { Value = 2, Text = "Targeta de identidad" },
+                new { Value = 3, Text = "Targeta extrangera" }
+                }, "Value", "Text"), "Seleccione un tipo de documento", new { @class = "form-select", required = "required" })
+                <div class="invalid-feedback">Seleccione tipo de Documento</div>
+              
+            </div>
+            <div class="col-md-6">
+                <label for="validationCustomUsername" class="form-label">Numero de documento</label>
+                @Html.TextBoxFor(u => u.Numero_doc, new { @class = "form-control", @pattern="[0-9]+", required = "required"})
+                    <div class="invalid-feedback">
+                        Numero de documento necesario
+                    </div>
+                </>
+            </div>
+            <div class="col-md-6 mb-3">
+
+                <label for="validationCustom03" class="form-label">Email address</label>
+                @Html.TextBoxFor(u => u.Correo, new { @class = "form-control", @type="email", required = "required", maxlength = "50"})
+                <div class="invalid-feedback">
+                    Correo electronico necesario
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label for="validationCustomUsername" class="form-label">Teléfono</label>
+                <div class="input-group has-validation">
+                    @Html.TextBoxFor(u => u.Telefono, new { @class = "form-control", @pattern="[0-9]+", required = "required"})
+                    <div class="invalid-feedback">
+                        Teléfono necesario
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6  mb-2">
+                <label for="validationCustom04" class="form-label">Rol</label>
+                <select required class="form-select" id="rol" name="FK_rol.PK_rol">
+                    <option value="" disabled selected>
+                        Seleccione un rol
+                    </option>
+                    @foreach (var rol in ViewBag.rol)
+                    {
+                        <option value="@rol.PK_rol">@rol.Nombre</option>
+                    }
+                </select>
+                <div class="invalid-feedback">
+                    Seleccione algun rol para el usuario
+                </div>
+            </div>
+            <div class="row align-content-center">
+                <div class="col-md-4 d-grid mx-auto mt-4">
+                    <button class="btn btn-primary fw-bolder" type="submit">Crear Usuario</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</body>
