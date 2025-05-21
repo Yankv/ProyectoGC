@@ -9,7 +9,7 @@ namespace AccesoDatos
 
         public bool Conectar()
         {
-            string cadenaConnection = "server=localhost; database=reservas; user=root; password=knz231*;port=3306";
+            string cadenaConnection = "server=localhost; database=reservas; user=root; password=Yaes231*;port=3306";
             connection = new MySqlConnection(cadenaConnection);
             try
             {

@@ -204,7 +204,8 @@ document.getElementById("confirmar").addEventListener("click", () => {
                 }
             })
             .catch(error => {
-                alert("¡Error al enviar los datos al servidor!");
+                console.log(error);
+                alert("¡Error al enviar los datos al servidor! ");
             });
     } else {
         alert("No ha programado los horarios.");

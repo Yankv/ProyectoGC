@@ -60,6 +60,7 @@ namespace Proyecto_WEB.Controllers
         }
 
         [HttpPost]
+        [Route("Recurso/Crear_horarios")]
         public JsonResult Crear_horarios([FromBody] IEnumerable<Horario> horarios)
         {
             bool result = ManejadorHorario.Crear_horarios(horarios);

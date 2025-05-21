@@ -2,8 +2,11 @@
 using LogicaNegocio;
 using LogicaNegocio.Models;
 using LogicaNegocio.Servicios;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Proyecto_WEB.Utilidad;
 using System.Data;
 
 namespace Proyecto_WEB.Controllers
@@ -135,11 +138,34 @@ namespace Proyecto_WEB.Controllers
         }
 
         [HttpPost]
-        public IActionResult ActualizarDatos(Usuario usuario)
+        public async Task<IActionResult> ActualizarDatos(Usuario usuario)
         {
             if (manejador.ActualizarDatos(usuario))
             {
-                //User.Identity.Name = usuario.Nombre;
+                string tipoDocumento = User.FindFirst("FK_tp_documento")?.Value;
+                string nombreDocumento = User.FindFirst("tp_document")?.Value;
+                string rol = User.FindFirst("Fk_rol")?.Value;
+                string nombre_rol = User.FindFirst("rol")?.Value;
+                string contrasenia = User.FindFirst("Contrasenia")?.Value;
+                string estado = User.FindFirst("Estado")?.Value;
+                usuario.Estado = estado;
+                usuario.FK_tp_documento = new TipoDocumento
+                {
+                    Pk_tipo_doc = Convert.ToInt32(tipoDocumento),
+                    Nombre = nombreDocumento.ToString()
+                };
+                usuario.FK_rol = new Rol
+                {
+                    PK_rol = Convert.ToInt32(rol),
+                    Nombre = nombre_rol.ToString()
+                };
+                usuario.Contrasenia = contrasenia;
+
+                #region AUTENTICACTION
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, InfoUsuario.GuardarInfo(usuario));
+                #endregion
+
                 return RedirectToAction("Actualizar");
             }
             return View();
@@ -240,4 +266,3 @@ namespace Proyecto_WEB.Controllers
         }
     }
 }
-

@@ -1,5 +1,6 @@
 ﻿using AccesoDatos;
 using LogicaNegocio.Models;
+using LogicaNegocio.Utilidad;
 using System.Data;
 
 namespace LogicaNegocio
@@ -7,13 +8,14 @@ namespace LogicaNegocio
     public class ManejadorUsuario
     {
         private Connection conexion = new Connection();
+        private ConexionJena conexionJena = new ConexionJena();
 
         public bool RegistrarUsuario(Usuario usuario)
         {
             int p_rol;
             if (usuario.FK_rol == null)
             {
-                p_rol = 0;
+                p_rol = 1;
             }
             else
             {
@@ -33,7 +35,28 @@ namespace LogicaNegocio
                 new Parametro("restablecer", usuario.Restablecer)
             };
 
-            return conexion.EjecutarTransaccion("crear_usuario", parametros);
+            bool resultado = conexion.EjecutarTransaccion("crear_usuario", parametros);
+
+            if (resultado)
+            {
+                var consulta = @"
+                    INSERT DATA {
+                        :User" + usuario.Numero_doc + @" a :Usuario ;
+                            :tieneRol :Rol" + p_rol + @" ;
+                            :tieneTpDocumento :TpDoc" + usuario.FK_tp_documento.Pk_tipo_doc + @" ;
+                            :apellidoUsuario '" + usuario.Apellido + @"' ;
+                            :correoUsuario '" + usuario.Correo + @"' ;  
+                            :documentoUsuario " + usuario.Numero_doc + @" ;
+                            :estadoUsuario 'Activo' ;
+                            :nombreUsuario '" + usuario.Nombre + @"' ;
+                            :telefonoUsuario " + usuario.Telefono + @" .
+                    }
+                ";
+
+                conexionJena.EjecutarUpdate(consulta);
+            }
+
+            return resultado;
         }
 
         public DataTable Login(string correo, string contrasenia)
@@ -77,11 +100,45 @@ namespace LogicaNegocio
 
         public List<Usuario> ObtenerUsuarios(long id)
         {
-            List<Parametro> parametros = new List<Parametro>()
-                {
-                    new Parametro("p_id_usuario", id)
-                };
-            DataTable data = conexion.EjecutarConsulta("consultar_usuario", parametros);
+            string finConsulta;
+            if (id == 0)
+            {
+                finConsulta = "}";
+            }
+            else
+            {
+                finConsulta = "FILTER (?Documento = " + id + ")}";
+            }
+            var consulta = @"SELECT (STR(?Documento) AS ?numero_doc)
+                        (STR(?Nombre) AS ?nombre)
+		                (STR(?Apellido) AS ?apellido)
+		                (STR(?Correo) AS ?correo)
+		                (STR(?Telefono) AS ?telefono)
+                        (STR(?Estado) AS ?estado)
+                        (STR(?TpDoc) AS ?nombre_tp_doc)
+                        (STR(?Fk_Rol) AS ?Fk_rol)
+                        (STR(?NombreRol) AS ?nombre_rol)
+                WHERE {
+                  ?usuario a :Usuario;
+                      :documentoUsuario ?Documento;
+                       :telefonoUsuario ?Telefono;
+                    :nombreUsuario ?Nombre;
+                    :apellidoUsuario ?Apellido;
+                    :correoUsuario ?Correo;
+                      :estadoUsuario ?Estado;
+                       :tieneTpDocumento ?tpdocumento;
+                    :tieneRol ?rol.
+  
+                  ?tpdocumento a :TipoDocumento;
+                    :nombreTpDocumento ?TpDoc.
+      
+                  ?rol a :Rol;
+                    :idRol ?Fk_Rol;
+                    :nombreRol ?NombreRol." + finConsulta;
+
+            var json = conexionJena.EjecutarConsultaAsync(consulta).Result;
+            DataTable data = SparqlJsonParser.ParseToDataTable(json);
+
             List<Usuario> usuarios = new List<Usuario>();
             foreach (DataRow row in data.AsEnumerable())
             {
@@ -115,11 +172,34 @@ namespace LogicaNegocio
                 new Parametro("p_estado", user.Estado),
                 new Parametro("p_rol", user.FK_rol.PK_rol)
             };
-            return conexion.EjecutarTransaccion("actualizar_RE", parametros);
+
+            bool resultado = conexion.EjecutarTransaccion("actualizar_RE", parametros);
+
+            if (resultado)
+            {
+                var update = @"
+                    DELETE {
+                        :User" + user.Numero_doc + @" :estadoUsuario ?estadoAnterior;
+                                :tieneRol ?rolAnterior.
+                    }
+                    INSERT {
+                        :User" + user.Numero_doc + @" :estadoUsuario '" + user.Estado + @"';
+                                :tieneRol :Rol" + user.FK_rol.PK_rol + @" .
+                    }
+                    WHERE {
+                        :User" + user.Numero_doc + @" :estadoUsuario ?estadoAnterior;
+                                :tieneRol ?rolAnterior.
+                    }";
+
+                conexionJena.EjecutarUpdate(update);
+            }
+
+            return resultado;
         }
 
         public bool ActualizarDatos(Usuario user)
         {
+            Console.WriteLine("Actualizar datos de usuario: " + user.Nombre);
             List<Parametro> parametros = new List<Parametro>()
             {
                 new Parametro("u_id", user.Numero_doc),
@@ -129,7 +209,35 @@ namespace LogicaNegocio
                 new Parametro("u_telefono", user.Telefono),
 
             };
-            return conexion.EjecutarTransaccion("actualizar_datos", parametros);
+
+            bool resultado = conexion.EjecutarTransaccion("actualizar_datos", parametros);
+
+            if (resultado)
+            {
+                var update = @"
+                    DELETE {
+                        :User" + user.Numero_doc + @" :nombreUsuario ?nombreAnterior;
+                                :apellidoUsuario ?apellidoAnterior;
+                                :correoUsuario ?correoAnterior;
+                                :telefonoUsuario ?telefonoAnterior.
+                    }
+                    INSERT {
+                        :User" + user.Numero_doc + @" :nombreUsuario '" + user.Nombre + @"';
+                                :apellidoUsuario '" + user.Apellido + @"';
+                                :correoUsuario '" + user.Correo + @"';
+                                :telefonoUsuario " + user.Telefono + @" .
+                    }
+                    WHERE {
+                        :User" + user.Numero_doc + @" :nombreUsuario ?nombreAnterior;
+                                :apellidoUsuario ?apellidoAnterior;
+                                :correoUsuario ?correoAnterior;
+                                :telefonoUsuario ?telefonoAnterior.
+                    }";
+
+                conexionJena.EjecutarUpdate(update);
+            }
+
+            return resultado;
         }
 
     }

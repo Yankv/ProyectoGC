@@ -1,4 +1,5 @@
-﻿@{
+﻿@model LogicaNegocio.Models.Usuario
+@{
     ViewData["Title"] = "Datos personales";
 }
 
@@ -16,10 +17,10 @@
                 <div class="d-flex">
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor"
-                            class="bi bi-person-circle" viewBox="0 0 16 16">
+                             class="bi bi-person-circle" viewBox="0 0 16 16">
                             <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
                             <path fill-rule="evenodd"
-                                d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
+                                  d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
                         </svg>
                     </span>
                     <h2> @Model.FK_rol.Nombre</h2>
@@ -27,53 +28,57 @@
                 <div class="col">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end margen">
                         <button type="button" class="btn btn-primary fw-bolder" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">
+                                data-bs-target="#exampleModal">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                class="bi bi-lock-fill" viewBox="0 0 16 16">
-                                <path
-                                    d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" />
+                                 class="bi bi-lock-fill" viewBox="0 0 16 16">
+                                <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" />
                             </svg>
                             Cambiar contraseña
                         </button>
                     </div>
                     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                        aria-hidden="true">
+                         aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <form class="needs-validation" novalidate>
                                     <div class="modal-header">
                                         <h5 class="modal-title fw-bolder" id="exampleModalLabel">Cambiar contraseña</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
+                                                aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <div class="container">
-                                            <label for="contraseña1" class="col-sm-11 col-form-label">Contraseña
-                                                actual</label>
+                                            <label for="contraseña1" class="col-sm-11 col-form-label">
+                                                Contraseña
+                                                actual
+                                            </label>
                                             <div class="row mb-10">
                                                 <div class="col-sm-11">
                                                     <input type="password" class="form-control" id="contraseña1"
-                                                        required>
+                                                           required>
                                                     <div class="invalid-feedback">Necesita una contraseña</div>
                                                 </div>
                                             </div>
 
-                                            <label for="contraseña2" class="col-sm-11 col-form-label">Contraseña nueva
+                                            <label for="contraseña2" class="col-sm-11 col-form-label">
+                                                Contraseña nueva
                                             </label>
                                             <div class="row mb-10">
                                                 <div class="col-sm-11">
                                                     <input type="password" class="form-control" id="contraseña2"
-                                                        required>
+                                                           required>
                                                     <div class="invalid-feedback">Necesita una contraseña</div>
                                                 </div>
                                             </div>
 
-                                            <label for="contraseña3" class="col-sm-11 col-form-label">Confirma
-                                                contraseña</label>
+                                            <label for="contraseña3" class="col-sm-11 col-form-label">
+                                                Confirma
+                                                contraseña
+                                            </label>
                                             <div class="row mb-10">
                                                 <div class="col-sm-11">
                                                     <input type="password" class="form-control" id="contraseña3"
-                                                        required>
+                                                           required>
                                                     <div class="invalid-feedback">Necesita una contraseña</div>
                                                 </div>
                                             </div>
@@ -94,12 +99,13 @@
             <h4>Actualizar datos personales</h4>
             <div class="container">
                 <form class="row needs-validation" asp-controller="Usuario" asp-action="ActualizarDatos" id="resgistro" novalidate>
+                    <input type="hidden" name="Numero_doc" value="@Model.Numero_doc" />
                     <div class="row mt-2">
                         <div class="col-6">
                             <div class="form-group">
                                 <label for="nombres">Nombres:</label>
                                 <input type="text" class="form-control" id="nombres" name="Nombre" required value="@Model.Nombre" />
-                                
+
                                 <div class="invalid-feedback">Nombre necesario</div>
                             </div>
                         </div>
@@ -116,7 +122,7 @@
                             <div class="form-group">
                                 <label for="Tipo de documento">Tipo de documento:</label>
                                 <input type="text" class="form-control" id="Tipodocumento"
-                                       required value="@Model.FK_tp_documento.Nombre" disabled/>
+                                       required value="@Model.FK_tp_documento.Nombre" disabled />
                                 <div class="invalid-feedback">Documento necesario</div>
                             </div>
                         </div>
@@ -124,7 +130,7 @@
                             <div class="form-group">
                                 <label for="numeroDocumento">Número de Documento:</label>
                                 <input type="text" class="form-control" id="numeroDocumento" name="Numero_doc"
-                                       required value="@Model.Numero_doc" disabled/>
+                                       required value="@Model.Numero_doc" disabled />
                                 <div class="invalid-feedback">Documento necesario</div>
                             </div>
                         </div>
@@ -133,7 +139,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="correo">Correo Electrónico:</label>
-                                <input type="email" class="form-control" id="correo" name="Correo" required value="@Model.Correo"/>
+                                <input type="email" class="form-control" id="correo" name="Correo" required value="@Model.Correo" />
                                 <div class="invalid-feedback">Ingrese un correo valido</div>
                             </div>
                         </div>
