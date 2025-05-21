@@ -1,8 +1,8 @@
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
--- Versión del servidor:         8.0.34 - MySQL Community Server - GPL
+-- Versión del servidor:         8.0.40 - MySQL Community Server - GPL
 -- SO del servidor:              Win64
--- HeidiSQL Versión:             12.5.0.6677
+-- HeidiSQL Versión:             12.10.0.7000
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -604,9 +604,25 @@ INSERT INTO `estado_reserva` (`Pk_estado_reserva`, `nombre`) VALUES
 	(3, 'No asistió'),
 	(4, 'Si asistió');
 
+-- Volcando estructura para evento reservas.finalizar_horario
+DELIMITER //
+CREATE EVENT `finalizar_horario` ON SCHEDULE EVERY 1 MINUTE STARTS '2025-05-18 17:45:41' ENDS '2025-05-23 17:45:45' ON COMPLETION PRESERVE ENABLE DO BEGIN
+UPDATE horario
+		SET horario.estado = 'Finalizado'
+		WHERE CONCAT(horario.fecha, ' ', horario.hora_inicio) < NOW();
+
+
+	UPDATE reserva
+	INNER JOIN horario
+	ON horario.fk_reserva = reserva.PK_reserva
+		SET reserva.fk_estado_reserva = 1
+		WHERE reserva.fk_estado_reserva = 2 AND CONCAT(horario.fecha, ' ', horario.hora_inicio) < NOW() AND horario.fk_reserva IS NOT NULL;
+END//
+DELIMITER ;
+
 -- Volcando estructura para evento reservas.finalizar_multa
 DELIMITER //
-CREATE EVENT `finalizar_multa` ON SCHEDULE EVERY 1 MINUTE STARTS '2023-12-02 17:26:21' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+CREATE EVENT `finalizar_multa` ON SCHEDULE EVERY 1 MINUTE STARTS '2023-12-02 17:26:21' ENDS '2025-05-23 07:37:22' ON COMPLETION PRESERVE ENABLE DO BEGIN
 	UPDATE multa
 		SET multa.estado = 'Finalizada'
 		WHERE multa.fecha_fin < NOW();
@@ -632,76 +648,288 @@ CREATE TABLE IF NOT EXISTS `horario` (
   CONSTRAINT `fk_Horario_Dia1` FOREIGN KEY (`fk_dia`) REFERENCES `dia` (`PK_dia`),
   CONSTRAINT `fk_Horario_Recurso1` FOREIGN KEY (`fk_recurso`) REFERENCES `recurso` (`PK_recurso`),
   CONSTRAINT `fk_Horario_Reserva1` FOREIGN KEY (`fk_reserva`) REFERENCES `reserva` (`PK_reserva`)
-) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=279 DEFAULT CHARSET=utf8mb3;
 
--- Volcando datos para la tabla reservas.horario: ~66 rows (aproximadamente)
+-- Volcando datos para la tabla reservas.horario: ~278 rows (aproximadamente)
 INSERT INTO `horario` (`PK_horario`, `fecha`, `hora_inicio`, `duracion`, `costo`, `estado`, `fk_dia`, `fk_recurso`, `fk_reserva`) VALUES
-	(1, '2023-12-01', '07:00:00', 60, 12000, 'Disponible', 7, 13, NULL),
-	(2, '2023-12-02', '08:00:00', 60, 12000, 'Disponible', 7, 13, NULL),
-	(3, '2023-12-02', '09:00:00', 60, 12000, 'Disponible', 7, 13, NULL),
-	(4, '2023-12-02', '10:00:00', 60, 12000, 'Disponible', 7, 13, NULL),
-	(5, '2023-12-02', '11:00:00', 60, 12000, 'Disponible', 7, 13, NULL),
-	(6, '2023-12-03', '07:00:00', 60, 12000, 'Reservado', 1, 13, 1),
-	(7, '2023-12-03', '08:00:00', 60, 12000, 'Disponible', 1, 13, NULL),
-	(8, '2023-12-03', '09:00:00', 60, 12000, 'Disponible', 1, 13, NULL),
-	(9, '2023-12-03', '10:00:00', 60, 12000, 'Disponible', 1, 13, NULL),
-	(10, '2023-12-03', '11:00:00', 60, 12000, 'Disponible', 1, 13, NULL),
-	(11, '2023-12-02', '06:00:00', 35, 12300, 'Disponible', 7, 13, NULL),
-	(12, '2023-12-02', '06:35:00', 35, 12300, 'Disponible', 7, 13, NULL),
-	(13, '2023-12-02', '07:10:00', 35, 12300, 'Disponible', 7, 13, NULL),
-	(14, '2023-12-02', '07:45:00', 35, 12300, 'Disponible', 7, 13, NULL),
-	(15, '2023-12-02', '08:20:00', 35, 12300, 'Disponible', 7, 13, NULL),
-	(16, '2023-12-02', '08:55:00', 35, 12300, 'Disponible', 7, 13, NULL),
-	(17, '2023-12-02', '09:30:00', 35, 12300, 'Disponible', 7, 13, NULL),
-	(18, '2023-12-03', '06:00:00', 35, 12300, 'Disponible', 1, 13, NULL),
-	(19, '2023-12-03', '06:35:00', 35, 12300, 'Disponible', 1, 13, NULL),
-	(20, '2023-12-03', '07:10:00', 35, 12300, 'Disponible', 1, 13, NULL),
-	(21, '2023-12-03', '07:45:00', 35, 12300, 'Disponible', 1, 13, NULL),
-	(22, '2023-12-03', '08:20:00', 35, 12300, 'Disponible', 1, 13, NULL),
-	(23, '2023-12-03', '08:55:00', 35, 12300, 'Disponible', 1, 13, NULL),
-	(24, '2023-12-03', '09:30:00', 35, 12300, 'Disponible', 1, 13, NULL),
-	(25, '2023-12-04', '06:00:00', 35, 12300, 'Disponible', 2, 13, NULL),
-	(26, '2023-12-04', '06:35:00', 35, 12300, 'Disponible', 2, 13, NULL),
-	(27, '2023-12-04', '07:10:00', 35, 12300, 'Disponible', 2, 13, NULL),
-	(28, '2023-12-04', '07:45:00', 35, 12300, 'Disponible', 2, 13, NULL),
-	(29, '2023-12-04', '08:20:00', 35, 12300, 'Disponible', 2, 13, NULL),
-	(30, '2023-12-04', '08:55:00', 35, 12300, 'Disponible', 2, 13, NULL),
-	(31, '2023-12-04', '09:30:00', 35, 12300, 'Disponible', 2, 13, NULL),
-	(32, '2023-12-05', '06:00:00', 35, 12300, 'Disponible', 3, 13, NULL),
-	(33, '2023-12-05', '06:35:00', 35, 12300, 'Disponible', 3, 13, NULL),
-	(34, '2023-12-05', '07:10:00', 35, 12300, 'Disponible', 3, 13, NULL),
-	(35, '2023-12-05', '07:45:00', 35, 12300, 'Disponible', 3, 13, NULL),
-	(36, '2023-12-05', '08:20:00', 35, 12300, 'Disponible', 3, 13, NULL),
-	(37, '2023-12-05', '08:55:00', 35, 12300, 'Disponible', 3, 13, NULL),
-	(38, '2023-12-05', '09:30:00', 35, 12300, 'Disponible', 3, 13, NULL),
-	(39, '2023-12-06', '06:00:00', 35, 12300, 'Disponible', 4, 13, NULL),
-	(40, '2023-12-06', '06:35:00', 35, 12300, 'Disponible', 4, 13, NULL),
-	(41, '2023-12-06', '07:10:00', 35, 12300, 'Disponible', 4, 13, NULL),
-	(42, '2023-12-06', '07:45:00', 35, 12300, 'Disponible', 4, 13, NULL),
-	(43, '2023-12-06', '08:20:00', 35, 12300, 'Disponible', 4, 13, NULL),
-	(44, '2023-12-06', '08:55:00', 35, 12300, 'Disponible', 4, 13, NULL),
-	(45, '2023-12-06', '09:30:00', 35, 12300, 'Disponible', 4, 13, NULL),
-	(46, '2023-12-07', '06:00:00', 35, 12300, 'Disponible', 5, 13, NULL),
-	(47, '2023-12-07', '06:35:00', 35, 12300, 'Disponible', 5, 13, NULL),
-	(48, '2023-12-07', '07:10:00', 35, 12300, 'Disponible', 5, 13, NULL),
-	(49, '2023-12-07', '07:45:00', 35, 12300, 'Disponible', 5, 13, NULL),
-	(50, '2023-12-07', '08:20:00', 35, 12300, 'Disponible', 5, 13, NULL),
-	(51, '2023-12-07', '08:55:00', 35, 12300, 'Disponible', 5, 13, NULL),
-	(52, '2023-12-07', '09:30:00', 35, 12300, 'Disponible', 5, 13, NULL),
-	(53, '2023-12-08', '06:00:00', 35, 12300, 'Disponible', 6, 13, NULL),
-	(54, '2023-12-08', '06:35:00', 35, 12300, 'Disponible', 6, 13, NULL),
-	(55, '2023-12-08', '07:10:00', 35, 12300, 'Disponible', 6, 13, NULL),
-	(56, '2023-12-08', '07:45:00', 35, 12300, 'Disponible', 6, 13, NULL),
-	(57, '2023-12-08', '08:20:00', 35, 12300, 'Disponible', 6, 13, NULL),
-	(58, '2023-12-08', '08:55:00', 35, 12300, 'Disponible', 6, 13, NULL),
-	(59, '2023-12-08', '09:30:00', 35, 12300, 'Disponible', 6, 13, NULL),
-	(60, '2023-12-09', '06:00:00', 35, 12300, 'Disponible', 7, 13, NULL),
-	(61, '2023-12-09', '06:35:00', 35, 12300, 'Disponible', 7, 13, NULL),
-	(62, '2023-12-09', '07:10:00', 35, 12300, 'Disponible', 7, 13, NULL),
-	(63, '2023-12-09', '07:45:00', 35, 12300, 'Disponible', 7, 13, NULL),
-	(64, '2023-12-09', '08:20:00', 35, 12300, 'Disponible', 7, 13, NULL),
-	(65, '2023-12-09', '08:55:00', 35, 12300, 'Disponible', 7, 13, NULL),
-	(66, '2023-12-09', '09:30:00', 35, 12300, 'Disponible', 7, 13, NULL);
+	(1, '2025-05-21', '08:16:00', 40, 20000, 'Finalizado', 4, 1, NULL),
+	(2, '2025-05-21', '08:56:00', 40, 20000, 'Finalizado', 4, 1, NULL),
+	(3, '2025-05-21', '09:36:00', 40, 20000, 'Finalizado', 4, 1, NULL),
+	(4, '2025-05-21', '10:16:00', 40, 20000, 'Finalizado', 4, 1, NULL),
+	(5, '2025-05-21', '10:56:00', 40, 20000, 'Finalizado', 4, 1, NULL),
+	(6, '2025-05-21', '11:36:00', 40, 20000, 'Finalizado', 4, 1, NULL),
+	(7, '2025-05-21', '12:16:00', 40, 20000, 'Finalizado', 4, 1, NULL),
+	(8, '2025-05-21', '12:56:00', 40, 20000, 'Finalizado', 4, 1, NULL),
+	(9, '2025-05-21', '13:36:00', 40, 20000, 'Finalizado', 4, 1, NULL),
+	(10, '2025-05-22', '08:16:00', 40, 20000, 'Disponible', 5, 1, NULL),
+	(11, '2025-05-22', '08:56:00', 40, 20000, 'Disponible', 5, 1, NULL),
+	(12, '2025-05-22', '09:36:00', 40, 20000, 'Disponible', 5, 1, NULL),
+	(13, '2025-05-22', '10:16:00', 40, 20000, 'Disponible', 5, 1, NULL),
+	(14, '2025-05-22', '10:56:00', 40, 20000, 'Disponible', 5, 1, NULL),
+	(15, '2025-05-22', '11:36:00', 40, 20000, 'Disponible', 5, 1, NULL),
+	(16, '2025-05-22', '12:16:00', 40, 20000, 'Disponible', 5, 1, NULL),
+	(17, '2025-05-22', '12:56:00', 40, 20000, 'Disponible', 5, 1, NULL),
+	(18, '2025-05-22', '13:36:00', 40, 20000, 'Disponible', 5, 1, NULL),
+	(19, '2025-05-23', '08:16:00', 40, 20000, 'Disponible', 6, 1, NULL),
+	(20, '2025-05-23', '08:56:00', 40, 20000, 'Disponible', 6, 1, NULL),
+	(21, '2025-05-23', '09:36:00', 40, 20000, 'Disponible', 6, 1, NULL),
+	(22, '2025-05-23', '10:16:00', 40, 20000, 'Disponible', 6, 1, NULL),
+	(23, '2025-05-23', '10:56:00', 40, 20000, 'Disponible', 6, 1, NULL),
+	(24, '2025-05-23', '11:36:00', 40, 20000, 'Disponible', 6, 1, NULL),
+	(25, '2025-05-23', '12:16:00', 40, 20000, 'Disponible', 6, 1, NULL),
+	(26, '2025-05-23', '12:56:00', 40, 20000, 'Disponible', 6, 1, NULL),
+	(27, '2025-05-23', '13:36:00', 40, 20000, 'Disponible', 6, 1, NULL),
+	(28, '2025-05-24', '08:16:00', 40, 20000, 'Disponible', 7, 1, NULL),
+	(29, '2025-05-24', '08:56:00', 40, 20000, 'Disponible', 7, 1, NULL),
+	(30, '2025-05-24', '09:36:00', 40, 20000, 'Disponible', 7, 1, NULL),
+	(31, '2025-05-24', '10:16:00', 40, 20000, 'Disponible', 7, 1, NULL),
+	(32, '2025-05-24', '10:56:00', 40, 20000, 'Disponible', 7, 1, NULL),
+	(33, '2025-05-24', '11:36:00', 40, 20000, 'Disponible', 7, 1, NULL),
+	(34, '2025-05-24', '12:16:00', 40, 20000, 'Disponible', 7, 1, NULL),
+	(35, '2025-05-24', '12:56:00', 40, 20000, 'Disponible', 7, 1, NULL),
+	(36, '2025-05-24', '13:36:00', 40, 20000, 'Disponible', 7, 1, NULL),
+	(37, '2025-05-25', '08:16:00', 40, 20000, 'Disponible', 1, 1, NULL),
+	(38, '2025-05-25', '08:56:00', 40, 20000, 'Disponible', 1, 1, NULL),
+	(39, '2025-05-25', '09:36:00', 40, 20000, 'Disponible', 1, 1, NULL),
+	(40, '2025-05-25', '10:16:00', 40, 20000, 'Disponible', 1, 1, NULL),
+	(41, '2025-05-25', '10:56:00', 40, 20000, 'Disponible', 1, 1, NULL),
+	(42, '2025-05-25', '11:36:00', 40, 20000, 'Disponible', 1, 1, NULL),
+	(43, '2025-05-25', '12:16:00', 40, 20000, 'Disponible', 1, 1, NULL),
+	(44, '2025-05-25', '12:56:00', 40, 20000, 'Disponible', 1, 1, NULL),
+	(45, '2025-05-25', '13:36:00', 40, 20000, 'Disponible', 1, 1, NULL),
+	(46, '2025-05-26', '08:16:00', 40, 20000, 'Disponible', 2, 1, NULL),
+	(47, '2025-05-26', '08:56:00', 40, 20000, 'Disponible', 2, 1, NULL),
+	(48, '2025-05-26', '09:36:00', 40, 20000, 'Disponible', 2, 1, NULL),
+	(49, '2025-05-26', '10:16:00', 40, 20000, 'Disponible', 2, 1, NULL),
+	(50, '2025-05-26', '10:56:00', 40, 20000, 'Disponible', 2, 1, NULL),
+	(51, '2025-05-26', '11:36:00', 40, 20000, 'Disponible', 2, 1, NULL),
+	(52, '2025-05-26', '12:16:00', 40, 20000, 'Disponible', 2, 1, NULL),
+	(53, '2025-05-26', '12:56:00', 40, 20000, 'Disponible', 2, 1, NULL),
+	(54, '2025-05-26', '13:36:00', 40, 20000, 'Disponible', 2, 1, NULL),
+	(55, '2025-05-27', '08:16:00', 40, 20000, 'Disponible', 3, 1, NULL),
+	(56, '2025-05-27', '08:56:00', 40, 20000, 'Disponible', 3, 1, NULL),
+	(57, '2025-05-27', '09:36:00', 40, 20000, 'Disponible', 3, 1, NULL),
+	(58, '2025-05-27', '10:16:00', 40, 20000, 'Disponible', 3, 1, NULL),
+	(59, '2025-05-27', '10:56:00', 40, 20000, 'Disponible', 3, 1, NULL),
+	(60, '2025-05-27', '11:36:00', 40, 20000, 'Disponible', 3, 1, NULL),
+	(61, '2025-05-27', '12:16:00', 40, 20000, 'Disponible', 3, 1, NULL),
+	(62, '2025-05-27', '12:56:00', 40, 20000, 'Disponible', 3, 1, NULL),
+	(63, '2025-05-27', '13:36:00', 40, 20000, 'Disponible', 3, 1, NULL),
+	(64, '2025-05-21', '08:00:00', 60, 15000, 'Finalizado', 4, 2, NULL),
+	(65, '2025-05-21', '09:00:00', 60, 15000, 'Finalizado', 4, 2, NULL),
+	(66, '2025-05-21', '10:00:00', 60, 15000, 'Finalizado', 4, 2, NULL),
+	(67, '2025-05-21', '11:00:00', 60, 15000, 'Finalizado', 4, 2, NULL),
+	(68, '2025-05-21', '12:00:00', 60, 15000, 'Finalizado', 4, 2, NULL),
+	(69, '2025-05-21', '13:00:00', 60, 15000, 'Finalizado', 4, 2, NULL),
+	(70, '2025-05-21', '14:00:00', 60, 15000, 'Finalizado', 4, 2, NULL),
+	(71, '2025-05-21', '15:00:00', 60, 15000, 'Finalizado', 4, 2, NULL),
+	(72, '2025-05-21', '16:00:00', 60, 15000, 'Finalizado', 4, 2, NULL),
+	(73, '2025-05-21', '17:00:00', 60, 15000, 'Finalizado', 4, 2, NULL),
+	(74, '2025-05-21', '18:00:00', 60, 15000, 'Disponible', 4, 2, NULL),
+	(75, '2025-05-22', '08:00:00', 60, 15000, 'Disponible', 5, 2, NULL),
+	(76, '2025-05-22', '09:00:00', 60, 15000, 'Disponible', 5, 2, NULL),
+	(77, '2025-05-22', '10:00:00', 60, 15000, 'Disponible', 5, 2, NULL),
+	(78, '2025-05-22', '11:00:00', 60, 15000, 'Disponible', 5, 2, NULL),
+	(79, '2025-05-22', '12:00:00', 60, 15000, 'Disponible', 5, 2, NULL),
+	(80, '2025-05-22', '13:00:00', 60, 15000, 'Disponible', 5, 2, NULL),
+	(81, '2025-05-22', '14:00:00', 60, 15000, 'Disponible', 5, 2, NULL),
+	(82, '2025-05-22', '15:00:00', 60, 15000, 'Disponible', 5, 2, NULL),
+	(83, '2025-05-22', '16:00:00', 60, 15000, 'Disponible', 5, 2, NULL),
+	(84, '2025-05-22', '17:00:00', 60, 15000, 'Disponible', 5, 2, NULL),
+	(85, '2025-05-22', '18:00:00', 60, 15000, 'Disponible', 5, 2, NULL),
+	(86, '2025-05-23', '08:00:00', 60, 15000, 'Disponible', 6, 2, NULL),
+	(87, '2025-05-23', '09:00:00', 60, 15000, 'Disponible', 6, 2, NULL),
+	(88, '2025-05-23', '10:00:00', 60, 15000, 'Disponible', 6, 2, NULL),
+	(89, '2025-05-23', '11:00:00', 60, 15000, 'Disponible', 6, 2, NULL),
+	(90, '2025-05-23', '12:00:00', 60, 15000, 'Disponible', 6, 2, NULL),
+	(91, '2025-05-23', '13:00:00', 60, 15000, 'Disponible', 6, 2, NULL),
+	(92, '2025-05-23', '14:00:00', 60, 15000, 'Disponible', 6, 2, NULL),
+	(93, '2025-05-23', '15:00:00', 60, 15000, 'Disponible', 6, 2, NULL),
+	(94, '2025-05-23', '16:00:00', 60, 15000, 'Disponible', 6, 2, NULL),
+	(95, '2025-05-23', '17:00:00', 60, 15000, 'Disponible', 6, 2, NULL),
+	(96, '2025-05-23', '18:00:00', 60, 15000, 'Disponible', 6, 2, NULL),
+	(97, '2025-05-24', '08:00:00', 60, 15000, 'Disponible', 7, 2, NULL),
+	(98, '2025-05-24', '09:00:00', 60, 15000, 'Disponible', 7, 2, NULL),
+	(99, '2025-05-24', '10:00:00', 60, 15000, 'Disponible', 7, 2, NULL),
+	(100, '2025-05-24', '11:00:00', 60, 15000, 'Disponible', 7, 2, NULL),
+	(101, '2025-05-24', '12:00:00', 60, 15000, 'Disponible', 7, 2, NULL),
+	(102, '2025-05-24', '13:00:00', 60, 15000, 'Disponible', 7, 2, NULL),
+	(103, '2025-05-24', '14:00:00', 60, 15000, 'Disponible', 7, 2, NULL),
+	(104, '2025-05-24', '15:00:00', 60, 15000, 'Disponible', 7, 2, NULL),
+	(105, '2025-05-24', '16:00:00', 60, 15000, 'Disponible', 7, 2, NULL),
+	(106, '2025-05-24', '17:00:00', 60, 15000, 'Disponible', 7, 2, NULL),
+	(107, '2025-05-24', '18:00:00', 60, 15000, 'Disponible', 7, 2, NULL),
+	(108, '2025-05-25', '08:00:00', 60, 15000, 'Disponible', 1, 2, NULL),
+	(109, '2025-05-25', '09:00:00', 60, 15000, 'Disponible', 1, 2, NULL),
+	(110, '2025-05-25', '10:00:00', 60, 15000, 'Disponible', 1, 2, NULL),
+	(111, '2025-05-25', '11:00:00', 60, 15000, 'Disponible', 1, 2, NULL),
+	(112, '2025-05-25', '12:00:00', 60, 15000, 'Disponible', 1, 2, NULL),
+	(113, '2025-05-25', '13:00:00', 60, 15000, 'Disponible', 1, 2, NULL),
+	(114, '2025-05-25', '14:00:00', 60, 15000, 'Disponible', 1, 2, NULL),
+	(115, '2025-05-25', '15:00:00', 60, 15000, 'Disponible', 1, 2, NULL),
+	(116, '2025-05-25', '16:00:00', 60, 15000, 'Disponible', 1, 2, NULL),
+	(117, '2025-05-25', '17:00:00', 60, 15000, 'Disponible', 1, 2, NULL),
+	(118, '2025-05-25', '18:00:00', 60, 15000, 'Disponible', 1, 2, NULL),
+	(119, '2025-05-26', '08:00:00', 60, 15000, 'Disponible', 2, 2, NULL),
+	(120, '2025-05-26', '09:00:00', 60, 15000, 'Disponible', 2, 2, NULL),
+	(121, '2025-05-26', '10:00:00', 60, 15000, 'Disponible', 2, 2, NULL),
+	(122, '2025-05-26', '11:00:00', 60, 15000, 'Disponible', 2, 2, NULL),
+	(123, '2025-05-26', '12:00:00', 60, 15000, 'Disponible', 2, 2, NULL),
+	(124, '2025-05-26', '13:00:00', 60, 15000, 'Disponible', 2, 2, NULL),
+	(125, '2025-05-26', '14:00:00', 60, 15000, 'Disponible', 2, 2, NULL),
+	(126, '2025-05-26', '15:00:00', 60, 15000, 'Disponible', 2, 2, NULL),
+	(127, '2025-05-26', '16:00:00', 60, 15000, 'Disponible', 2, 2, NULL),
+	(128, '2025-05-26', '17:00:00', 60, 15000, 'Disponible', 2, 2, NULL),
+	(129, '2025-05-26', '18:00:00', 60, 15000, 'Disponible', 2, 2, NULL),
+	(130, '2025-05-27', '08:00:00', 60, 15000, 'Disponible', 3, 2, NULL),
+	(131, '2025-05-27', '09:00:00', 60, 15000, 'Disponible', 3, 2, NULL),
+	(132, '2025-05-27', '10:00:00', 60, 15000, 'Disponible', 3, 2, NULL),
+	(133, '2025-05-27', '11:00:00', 60, 15000, 'Disponible', 3, 2, NULL),
+	(134, '2025-05-27', '12:00:00', 60, 15000, 'Disponible', 3, 2, NULL),
+	(135, '2025-05-27', '13:00:00', 60, 15000, 'Disponible', 3, 2, NULL),
+	(136, '2025-05-27', '14:00:00', 60, 15000, 'Disponible', 3, 2, NULL),
+	(137, '2025-05-27', '15:00:00', 60, 15000, 'Disponible', 3, 2, NULL),
+	(138, '2025-05-27', '16:00:00', 60, 15000, 'Disponible', 3, 2, NULL),
+	(139, '2025-05-27', '17:00:00', 60, 15000, 'Disponible', 3, 2, NULL),
+	(140, '2025-05-27', '18:00:00', 60, 15000, 'Disponible', 3, 2, NULL),
+	(141, '2025-05-28', '08:00:00', 60, 15000, 'Disponible', 4, 2, NULL),
+	(142, '2025-05-28', '09:00:00', 60, 15000, 'Disponible', 4, 2, NULL),
+	(143, '2025-05-28', '10:00:00', 60, 15000, 'Disponible', 4, 2, NULL),
+	(144, '2025-05-28', '11:00:00', 60, 15000, 'Disponible', 4, 2, NULL),
+	(145, '2025-05-28', '12:00:00', 60, 15000, 'Disponible', 4, 2, NULL),
+	(146, '2025-05-28', '13:00:00', 60, 15000, 'Disponible', 4, 2, NULL),
+	(147, '2025-05-28', '14:00:00', 60, 15000, 'Disponible', 4, 2, NULL),
+	(148, '2025-05-28', '15:00:00', 60, 15000, 'Disponible', 4, 2, NULL),
+	(149, '2025-05-28', '16:00:00', 60, 15000, 'Disponible', 4, 2, NULL),
+	(150, '2025-05-28', '17:00:00', 60, 15000, 'Disponible', 4, 2, NULL),
+	(151, '2025-05-28', '18:00:00', 60, 15000, 'Disponible', 4, 2, NULL),
+	(152, '2025-05-21', '09:17:00', 180, 0, 'Finalizado', 4, 3, NULL),
+	(153, '2025-05-21', '12:17:00', 180, 0, 'Finalizado', 4, 3, NULL),
+	(154, '2025-05-21', '15:17:00', 180, 0, 'Finalizado', 4, 3, NULL),
+	(155, '2025-05-21', '18:17:00', 180, 0, 'Disponible', 4, 3, NULL),
+	(156, '2025-05-22', '09:17:00', 180, 0, 'Disponible', 5, 3, NULL),
+	(157, '2025-05-22', '12:17:00', 180, 0, 'Disponible', 5, 3, NULL),
+	(158, '2025-05-22', '15:17:00', 180, 0, 'Disponible', 5, 3, NULL),
+	(159, '2025-05-22', '18:17:00', 180, 0, 'Disponible', 5, 3, NULL),
+	(160, '2025-05-23', '09:17:00', 180, 0, 'Disponible', 6, 3, NULL),
+	(161, '2025-05-23', '12:17:00', 180, 0, 'Disponible', 6, 3, NULL),
+	(162, '2025-05-23', '15:17:00', 180, 0, 'Disponible', 6, 3, NULL),
+	(163, '2025-05-23', '18:17:00', 180, 0, 'Disponible', 6, 3, NULL),
+	(164, '2025-05-24', '09:17:00', 180, 0, 'Disponible', 7, 3, NULL),
+	(165, '2025-05-24', '12:17:00', 180, 0, 'Disponible', 7, 3, NULL),
+	(166, '2025-05-24', '15:17:00', 180, 0, 'Disponible', 7, 3, NULL),
+	(167, '2025-05-24', '18:17:00', 180, 0, 'Disponible', 7, 3, NULL),
+	(168, '2025-05-25', '09:17:00', 180, 0, 'Disponible', 1, 3, NULL),
+	(169, '2025-05-25', '12:17:00', 180, 0, 'Disponible', 1, 3, NULL),
+	(170, '2025-05-25', '15:17:00', 180, 0, 'Disponible', 1, 3, NULL),
+	(171, '2025-05-25', '18:17:00', 180, 0, 'Disponible', 1, 3, NULL),
+	(172, '2025-05-26', '09:17:00', 180, 0, 'Disponible', 2, 3, NULL),
+	(173, '2025-05-26', '12:17:00', 180, 0, 'Disponible', 2, 3, NULL),
+	(174, '2025-05-26', '15:17:00', 180, 0, 'Disponible', 2, 3, NULL),
+	(175, '2025-05-26', '18:17:00', 180, 0, 'Disponible', 2, 3, NULL),
+	(176, '2025-05-27', '09:17:00', 180, 0, 'Disponible', 3, 3, NULL),
+	(177, '2025-05-27', '12:17:00', 180, 0, 'Disponible', 3, 3, NULL),
+	(178, '2025-05-27', '15:17:00', 180, 0, 'Disponible', 3, 3, NULL),
+	(179, '2025-05-27', '18:17:00', 180, 0, 'Disponible', 3, 3, NULL),
+	(180, '2025-05-28', '09:17:00', 180, 0, 'Disponible', 4, 3, NULL),
+	(181, '2025-05-28', '12:17:00', 180, 0, 'Disponible', 4, 3, NULL),
+	(182, '2025-05-28', '15:17:00', 180, 0, 'Disponible', 4, 3, NULL),
+	(183, '2025-05-28', '18:17:00', 180, 0, 'Disponible', 4, 3, NULL),
+	(184, '2025-05-21', '10:59:00', 30, 50000, 'Finalizado', 4, 3, NULL),
+	(185, '2025-05-21', '11:29:00', 30, 50000, 'Finalizado', 4, 3, NULL),
+	(186, '2025-05-21', '11:59:00', 30, 50000, 'Finalizado', 4, 3, NULL),
+	(187, '2025-05-21', '12:29:00', 30, 50000, 'Finalizado', 4, 3, NULL),
+	(188, '2025-05-21', '12:59:00', 30, 50000, 'Finalizado', 4, 3, NULL),
+	(189, '2025-05-21', '13:29:00', 30, 50000, 'Finalizado', 4, 3, NULL),
+	(190, '2025-05-21', '13:59:00', 30, 50000, 'Finalizado', 4, 3, NULL),
+	(191, '2025-05-21', '14:29:00', 30, 50000, 'Finalizado', 4, 3, NULL),
+	(192, '2025-05-21', '14:59:00', 30, 50000, 'Finalizado', 4, 3, NULL),
+	(193, '2025-05-21', '15:29:00', 30, 50000, 'Finalizado', 4, 3, NULL),
+	(194, '2025-05-22', '10:59:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(195, '2025-05-22', '11:29:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(196, '2025-05-22', '11:59:00', 30, 50000, 'Reservado', 5, 3, 1),
+	(197, '2025-05-22', '12:29:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(198, '2025-05-22', '12:59:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(199, '2025-05-22', '13:29:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(200, '2025-05-22', '13:59:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(201, '2025-05-22', '14:29:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(202, '2025-05-22', '14:59:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(203, '2025-05-22', '15:29:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(204, '2025-05-23', '10:59:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(205, '2025-05-23', '11:29:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(206, '2025-05-23', '11:59:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(207, '2025-05-23', '12:29:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(208, '2025-05-23', '12:59:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(209, '2025-05-23', '13:29:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(210, '2025-05-23', '13:59:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(211, '2025-05-23', '14:29:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(212, '2025-05-23', '14:59:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(213, '2025-05-23', '15:29:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(214, '2025-05-28', '10:59:00', 30, 50000, 'Disponible', 4, 3, NULL),
+	(215, '2025-05-28', '11:29:00', 30, 50000, 'Disponible', 4, 3, NULL),
+	(216, '2025-05-28', '11:59:00', 30, 50000, 'Disponible', 4, 3, NULL),
+	(217, '2025-05-28', '12:29:00', 30, 50000, 'Disponible', 4, 3, NULL),
+	(218, '2025-05-28', '12:59:00', 30, 50000, 'Disponible', 4, 3, NULL),
+	(219, '2025-05-28', '13:29:00', 30, 50000, 'Disponible', 4, 3, NULL),
+	(220, '2025-05-28', '13:59:00', 30, 50000, 'Disponible', 4, 3, NULL),
+	(221, '2025-05-28', '14:29:00', 30, 50000, 'Disponible', 4, 3, NULL),
+	(222, '2025-05-28', '14:59:00', 30, 50000, 'Disponible', 4, 3, NULL),
+	(223, '2025-05-28', '15:29:00', 30, 50000, 'Disponible', 4, 3, NULL),
+	(224, '2025-05-29', '10:59:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(225, '2025-05-29', '11:29:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(226, '2025-05-29', '11:59:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(227, '2025-05-29', '12:29:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(228, '2025-05-29', '12:59:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(229, '2025-05-29', '13:29:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(230, '2025-05-29', '13:59:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(231, '2025-05-29', '14:29:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(232, '2025-05-29', '14:59:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(233, '2025-05-29', '15:29:00', 30, 50000, 'Disponible', 5, 3, NULL),
+	(234, '2025-05-30', '10:59:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(235, '2025-05-30', '11:29:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(236, '2025-05-30', '11:59:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(237, '2025-05-30', '12:29:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(238, '2025-05-30', '12:59:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(239, '2025-05-30', '13:29:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(240, '2025-05-30', '13:59:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(241, '2025-05-30', '14:29:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(242, '2025-05-30', '14:59:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(243, '2025-05-30', '15:29:00', 30, 50000, 'Disponible', 6, 3, NULL),
+	(244, '2025-05-21', '12:00:00', 90, 30000, 'Finalizado', 4, 4, NULL),
+	(245, '2025-05-21', '13:30:00', 90, 30000, 'Finalizado', 4, 4, NULL),
+	(246, '2025-05-21', '15:00:00', 90, 30000, 'Finalizado', 4, 4, NULL),
+	(247, '2025-05-21', '16:30:00', 90, 30000, 'Finalizado', 4, 4, NULL),
+	(248, '2025-05-21', '18:00:00', 90, 30000, 'Disponible', 4, 4, NULL),
+	(249, '2025-05-22', '12:00:00', 90, 30000, 'Disponible', 5, 4, NULL),
+	(250, '2025-05-22', '13:30:00', 90, 30000, 'Disponible', 5, 4, NULL),
+	(251, '2025-05-22', '15:00:00', 90, 30000, 'Disponible', 5, 4, NULL),
+	(252, '2025-05-22', '16:30:00', 90, 30000, 'Disponible', 5, 4, NULL),
+	(253, '2025-05-22', '18:00:00', 90, 30000, 'Disponible', 5, 4, NULL),
+	(254, '2025-05-23', '12:00:00', 90, 30000, 'Disponible', 6, 4, NULL),
+	(255, '2025-05-23', '13:30:00', 90, 30000, 'Disponible', 6, 4, NULL),
+	(256, '2025-05-23', '15:00:00', 90, 30000, 'Disponible', 6, 4, NULL),
+	(257, '2025-05-23', '16:30:00', 90, 30000, 'Disponible', 6, 4, NULL),
+	(258, '2025-05-23', '18:00:00', 90, 30000, 'Disponible', 6, 4, NULL),
+	(259, '2025-05-27', '12:00:00', 90, 30000, 'Disponible', 3, 4, NULL),
+	(260, '2025-05-27', '13:30:00', 90, 30000, 'Disponible', 3, 4, NULL),
+	(261, '2025-05-27', '15:00:00', 90, 30000, 'Disponible', 3, 4, NULL),
+	(262, '2025-05-27', '16:30:00', 90, 30000, 'Disponible', 3, 4, NULL),
+	(263, '2025-05-27', '18:00:00', 90, 30000, 'Disponible', 3, 4, NULL),
+	(264, '2025-05-28', '12:00:00', 90, 30000, 'Disponible', 4, 4, NULL),
+	(265, '2025-05-28', '13:30:00', 90, 30000, 'Disponible', 4, 4, NULL),
+	(266, '2025-05-28', '15:00:00', 90, 30000, 'Disponible', 4, 4, NULL),
+	(267, '2025-05-28', '16:30:00', 90, 30000, 'Disponible', 4, 4, NULL),
+	(268, '2025-05-28', '18:00:00', 90, 30000, 'Disponible', 4, 4, NULL),
+	(269, '2025-05-29', '12:00:00', 90, 30000, 'Disponible', 5, 4, NULL),
+	(270, '2025-05-29', '13:30:00', 90, 30000, 'Disponible', 5, 4, NULL),
+	(271, '2025-05-29', '15:00:00', 90, 30000, 'Disponible', 5, 4, NULL),
+	(272, '2025-05-29', '16:30:00', 90, 30000, 'Disponible', 5, 4, NULL),
+	(273, '2025-05-29', '18:00:00', 90, 30000, 'Disponible', 5, 4, NULL),
+	(274, '2025-05-30', '12:00:00', 90, 30000, 'Disponible', 6, 4, NULL),
+	(275, '2025-05-30', '13:30:00', 90, 30000, 'Disponible', 6, 4, NULL),
+	(276, '2025-05-30', '15:00:00', 90, 30000, 'Disponible', 6, 4, NULL),
+	(277, '2025-05-30', '16:30:00', 90, 30000, 'Disponible', 6, 4, NULL),
+	(278, '2025-05-30', '18:00:00', 90, 30000, 'Disponible', 6, 4, NULL);
 
 -- Volcando estructura para tabla reservas.informacion_empresa
 CREATE TABLE IF NOT EXISTS `informacion_empresa` (
@@ -717,7 +945,7 @@ CREATE TABLE IF NOT EXISTS `informacion_empresa` (
   CONSTRAINT `fk_usuario` FOREIGN KEY (`fk_usuario`) REFERENCES `usuario` (`numero_doc`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
 
--- Volcando datos para la tabla reservas.informacion_empresa: ~1 rows (aproximadamente)
+-- Volcando datos para la tabla reservas.informacion_empresa: ~0 rows (aproximadamente)
 INSERT INTO `informacion_empresa` (`id_infoEmpresa`, `nombre`, `telefono`, `correo`, `direccion`, `descripcion`, `fk_usuario`) VALUES
 	(1, 'Reserv+', 3245644567, 'reserplus@gmail.com', 'cra #7', 'Tu sistema gestor de confianza', 14234);
 
@@ -728,22 +956,6 @@ BEGIN
 	SELECT * FROM informacion_empresa
 	ORDER BY informacion_empresa.id_infoEmpresa DESC
 	LIMIT 1;
-END//
-DELIMITER ;
-
--- Volcando estructura para evento reservas.invalidar_horarios
-DELIMITER //
-CREATE EVENT `invalidar_horarios` ON SCHEDULE EVERY 1 MINUTE STARTS '2023-12-02 17:25:31' ENDS '2023-12-28 17:46:04' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
-	UPDATE horario
-		SET horario.estado = 'Finalizado'
-		WHERE CONCAT(horario.fecha, ' ', horario.hora_inicio) < NOW();
-
-
-	UPDATE reserva
-	INNER JOIN horario
-	ON horario.fk_reserva = reserva.PK_reserva
-		SET reserva.fk_estado_reserva = 1
-		WHERE reserva.fk_estado_reserva = 2 AND CONCAT(horario.fecha, ' ', horario.hora_inicio) < NOW() AND horario.fk_reserva IS NOT NULL;
 END//
 DELIMITER ;
 
@@ -945,23 +1157,14 @@ CREATE TABLE IF NOT EXISTS `recurso` (
   KEY `fk_Recurso_Usuario1_idx` (`fk_usuario_encargado`),
   CONSTRAINT `fk_Recurso_Tipo_recurso1` FOREIGN KEY (`FK_tp_recurso`) REFERENCES `tipo_recurso` (`PK_tp_recurso`),
   CONSTRAINT `fk_Recurso_Usuario1` FOREIGN KEY (`fk_usuario_encargado`) REFERENCES `usuario` (`numero_doc`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
 
--- Volcando datos para la tabla reservas.recurso: ~13 rows (aproximadamente)
+-- Volcando datos para la tabla reservas.recurso: ~4 rows (aproximadamente)
 INSERT INTO `recurso` (`PK_recurso`, `nombre`, `estado`, `Direccion`, `FK_tp_recurso`, `fk_usuario_encargado`) VALUES
-	(5, 'Canchas', 'Activo', 'cra #7', 1, 23345),
-	(6, 'Cancha sintetica', 'Activo', 'cra #7', 2, 335352),
-	(7, 'Canchas arena', 'Activo', 'cra #7', 2, NULL),
-	(8, 'Piscina', 'Activo', 'cra #7', 2, NULL),
-	(9, 'Consultorio 1', 'Activo', 'cra #7', 2, NULL),
-	(10, 'Margarita', 'Activo', 'cra #7', 1, 932435),
-	(11, 'yancarlos', 'Activo', 'cra #7', 1, 23345),
-	(12, 'Sebastian', 'Activo', 'cra #7', 1, 335352),
-	(13, 'Manganisa', 'Activo', 'cra #7', 2, NULL),
-	(14, 'yan villegas', 'Activo', 'cra #7', 2, 14234),
-	(15, 'Prueba', 'Activo', 'cra #7', 2, NULL),
-	(16, 'Nicolas Vela', 'Activo', 'cra #7', 1, 932435),
-	(17, 'Barbería', 'Activo', 'cra #7', 2, NULL);
+	(1, 'Piscina grande', 'Activo', 'Cra #75', 1, 14234),
+	(2, 'Barbería Xx', 'Activo', 'Cra #75', 1, 9813241),
+	(3, 'Canchas pequeñas', 'Activo', 'Cra #75', 2, 239532),
+	(4, 'Uñas', 'Activo', 'Cra #75', 2, 4241142);
 
 -- Volcando estructura para tabla reservas.reserva
 CREATE TABLE IF NOT EXISTS `reserva` (
@@ -979,23 +1182,23 @@ CREATE TABLE IF NOT EXISTS `reserva` (
 
 -- Volcando datos para la tabla reservas.reserva: ~1 rows (aproximadamente)
 INSERT INTO `reserva` (`PK_reserva`, `fecha_registro`, `fk_estado_reserva`, `fk_usuario_cliente`) VALUES
-	(1, '2023-12-02', 1, 14234);
+	(1, '2025-05-21', 2, 14234);
 
 -- Volcando estructura para vista reservas.reservas_view
 -- Creando tabla temporal para superar errores de dependencia de VIEW
 CREATE TABLE `reservas_view` (
-	`recurso` VARCHAR(55) NOT NULL COLLATE 'utf8mb3_general_ci',
-	`nombre` VARCHAR(50) NOT NULL COLLATE 'utf8mb3_general_ci',
-	`apellido` VARCHAR(50) NOT NULL COLLATE 'utf8mb3_general_ci',
+	`recurso` VARCHAR(1) NOT NULL COLLATE 'utf8mb3_general_ci',
+	`nombre` VARCHAR(1) NOT NULL COLLATE 'utf8mb3_general_ci',
+	`apellido` VARCHAR(1) NOT NULL COLLATE 'utf8mb3_general_ci',
 	`fecha_registro` DATE NOT NULL,
 	`fecha` DATE NOT NULL,
 	`hora_inicio` TIME NOT NULL,
-	`duracion` INT(10) NOT NULL,
+	`duracion` INT NOT NULL,
 	`costo` FLOAT NOT NULL,
-	`estado` VARCHAR(50) NOT NULL COLLATE 'utf8mb3_general_ci',
-	`PK_horario` INT(10) NOT NULL,
-	`PK_reserva` INT(10) NOT NULL,
-	`PK_recurso` INT(10) NOT NULL
+	`estado` VARCHAR(1) NOT NULL COLLATE 'utf8mb3_general_ci',
+	`PK_horario` INT NOT NULL,
+	`PK_reserva` INT NOT NULL,
+	`PK_recurso` INT NOT NULL
 ) ENGINE=MyISAM;
 
 -- Volcando estructura para procedimiento reservas.restablecer_contrasenia
@@ -1019,7 +1222,7 @@ CREATE TABLE IF NOT EXISTS `rol` (
   `estado` enum('Activo','Inactivo') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT 'Activo',
   PRIMARY KEY (`PK_rol`),
   UNIQUE KEY `PK_rol_UNIQUE` (`PK_rol`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
 
 -- Volcando datos para la tabla reservas.rol: ~3 rows (aproximadamente)
 INSERT INTO `rol` (`PK_rol`, `nombre`, `estado`) VALUES
@@ -1129,13 +1332,13 @@ CREATE TABLE IF NOT EXISTS `usuario` (
 -- Volcando datos para la tabla reservas.usuario: ~8 rows (aproximadamente)
 INSERT INTO `usuario` (`numero_doc`, `telefono`, `nombre`, `apellido`, `correo`, `contrasenia`, `token`, `fecha_registro`, `estado`, `Fk_tp_documento`, `Fk_rol`, `restablecer`) VALUES
 	(14234, 323454, 'yan', 'villegas', 'yan@gmail.com', 'siu231', 'e5de7e5894d047fc9050a98ebd0f4152', '2023-11-14', 'Activo', 1, 3, b'0'),
-	(23123, 14234234, 'Erick', 'Urrea', 'erick@gamil.com', '23123', 'b5805706f41141058ed892ee0eb26d22', '2023-11-14', 'Activo', 1, 2, b'0'),
-	(23345, 32423424, 'Yan Carlos', 'Villegas Piñeros', 'yancarlosvillegas7@gmail.com', 'siu231', '47203710bd2543448e40913df8e9f515', '2023-11-12', 'Activo', 1, 1, b'1'),
-	(123456, 3203203232, 'Sergio', 'Sanchez', 'segito@gmail.com', 'sergio1234', '931864ba700d425b9644c7ee92b75877', '2023-11-17', 'Activo', 3, 1, b'0'),
-	(335352, 402284723, 'Sebastian', 'Ariza', 'ariza@gmail.com', 'a123', '0d570b5dc8c24d83854879bb6e71e140', '2023-11-12', 'Activo', 1, 3, b'0'),
-	(555555, 9459752, 'Sebastian', 'Ariza', 'arizagonzalez10@gmail.com', '12345', '51c2158300334c5181504b895e32ae4f', '2023-11-15', 'Activo', 3, 1, b'1'),
-	(932435, 342352311, 'Nicolas', 'Vela', 'nicolas@gmail.com', 'vela123', '0ef800aad18f4c7d8a9256c8470389bf', '2023-11-12', 'Activo', 1, 2, b'0'),
-	(14235346, 12923934, 'Luis', 'Vela', 'luisvela@gmail.com', 'l123', 'beb7dfdb870b466587ce6cd03b9f0f8e', '2023-11-28', 'Activo', 1, 1, b'0');
+	(239532, 3423423, 'Alberto', 'Rodriguez', 'albert@gmail.com', 'albert123', '2745ba403ffd475885578d7041a27bac', '2025-05-21', 'Activo', 1, 2, b'0'),
+	(4241142, 3423423, 'Camila', 'Montes', 'camila@gmail.com', 'camila123', '8726a841ad87477db291f533a41fd3a7', '2025-05-21', 'Activo', 1, 2, b'0'),
+	(7254323, 3423423, 'Juan', 'Sanchez', 'juan@gmail.com', 'juan123', 'fb98d17b5d79435dbefcecd579fc37a0', '2025-05-21', 'Activo', 1, 1, b'0'),
+	(8245432, 3423423, 'Joan', 'Pinto', 'joan@gmail.com', 'joan123', 'a6811c9936944155a4450919476adf48', '2025-05-21', 'Activo', 1, 1, b'0'),
+	(9813241, 423424432, 'Cesar', 'España', 'cesar@gmail.com', 'cesar123', '4567c7a6a2fa4af395b23fc8adcb5eb3', '2025-05-21', 'Activo', 1, 2, b'0'),
+	(82423423, 3423423, 'Nicolas', 'Correa', 'nicolas@gmail.com', 'nicolas123', '3d7ab18d9bad4649b65dae76c029c1c6', '2025-05-21', 'Activo', 1, 1, b'0'),
+	(424268680, 3423423, 'Maria', 'España', 'maria@gmail.com', 'maria123', 'ebef77b6c3c54938903bf3e265bcebb4', '2025-05-21', 'Activo', 1, 1, b'0');
 
 -- Volcando estructura para procedimiento reservas.validar_inicio
 DELIMITER //
@@ -1283,10 +1486,10 @@ END//
 DELIMITER ;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
--- Volcando estructura para vista reservas.reservas_view
 -- Eliminando tabla temporal y crear estructura final de VIEW
 DROP TABLE IF EXISTS `reservas_view`;
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `reservas_view` AS select `recurso`.`nombre` AS `recurso`,`usuario`.`nombre` AS `nombre`,`usuario`.`apellido` AS `apellido`,`reserva`.`fecha_registro` AS `fecha_registro`,`horario`.`fecha` AS `fecha`,`horario`.`hora_inicio` AS `hora_inicio`,`horario`.`duracion` AS `duracion`,`horario`.`costo` AS `costo`,`estado_reserva`.`nombre` AS `estado`,`horario`.`PK_horario` AS `PK_horario`,`reserva`.`PK_reserva` AS `PK_reserva`,`recurso`.`PK_recurso` AS `PK_recurso` from ((((`recurso` join `horario` on((`horario`.`fk_recurso` = `recurso`.`PK_recurso`))) join `reserva` on((`horario`.`fk_reserva` = `reserva`.`PK_reserva`))) join `usuario` on((`reserva`.`fk_usuario_cliente` = `usuario`.`numero_doc`))) join `estado_reserva` on((`reserva`.`fk_estado_reserva` = `estado_reserva`.`Pk_estado_reserva`))) order by `horario`.`fecha`;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `reservas_view` AS select `recurso`.`nombre` AS `recurso`,`usuario`.`nombre` AS `nombre`,`usuario`.`apellido` AS `apellido`,`reserva`.`fecha_registro` AS `fecha_registro`,`horario`.`fecha` AS `fecha`,`horario`.`hora_inicio` AS `hora_inicio`,`horario`.`duracion` AS `duracion`,`horario`.`costo` AS `costo`,`estado_reserva`.`nombre` AS `estado`,`horario`.`PK_horario` AS `PK_horario`,`reserva`.`PK_reserva` AS `PK_reserva`,`recurso`.`PK_recurso` AS `PK_recurso` from ((((`recurso` join `horario` on((`horario`.`fk_recurso` = `recurso`.`PK_recurso`))) join `reserva` on((`horario`.`fk_reserva` = `reserva`.`PK_reserva`))) join `usuario` on((`reserva`.`fk_usuario_cliente` = `usuario`.`numero_doc`))) join `estado_reserva` on((`reserva`.`fk_estado_reserva` = `estado_reserva`.`Pk_estado_reserva`))) order by `horario`.`fecha`
+;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

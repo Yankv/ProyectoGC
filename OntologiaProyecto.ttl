@@ -1,0 +1,574 @@
+@prefix : <http://www.semanticweb.org/ProyectoGC/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.semanticweb.org/ProyectoGC/> .
+
+<http://www.semanticweb.org/ProyectoGC> rdf:type owl:Ontology .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.semanticweb.org/ProyectoGC/administradoPor
+:administradoPor rdf:type owl:ObjectProperty ;
+                 rdfs:domain :Recurso ;
+                 rdfs:range :Usuario .
+
+
+###  http://www.semanticweb.org/ProyectoGC/cambiadaPor
+:cambiadaPor rdf:type owl:ObjectProperty ;
+             rdfs:domain :InfoEmpresa ;
+             rdfs:range :Usuario .
+
+
+###  http://www.semanticweb.org/ProyectoGC/perteneceA
+:perteneceA rdf:type owl:ObjectProperty ;
+            rdfs:domain :Horario ;
+            rdfs:range :Recurso .
+
+
+###  http://www.semanticweb.org/ProyectoGC/realizadaPor
+:realizadaPor rdf:type owl:ObjectProperty ;
+              rdfs:domain :Reserva ;
+              rdfs:range :Usuario .
+
+
+###  http://www.semanticweb.org/ProyectoGC/reservadoPor
+:reservadoPor rdf:type owl:ObjectProperty ;
+              rdfs:domain :Horario ;
+              rdfs:range :Reserva .
+
+
+###  http://www.semanticweb.org/ProyectoGC/tieneDia
+:tieneDia rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf owl:topObjectProperty ;
+          rdfs:domain :Horario ;
+          rdfs:range :Dia .
+
+
+###  http://www.semanticweb.org/ProyectoGC/tieneEstadoReserva
+:tieneEstadoReserva rdf:type owl:ObjectProperty ;
+                    rdfs:subPropertyOf owl:topObjectProperty ;
+                    rdfs:domain :Reserva ;
+                    rdfs:range :EstadoReserva .
+
+
+###  http://www.semanticweb.org/ProyectoGC/tieneRol
+:tieneRol rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf owl:topObjectProperty ;
+          rdfs:domain :Usuario ;
+          rdfs:range :Rol .
+
+
+###  http://www.semanticweb.org/ProyectoGC/tieneTpDocumento
+:tieneTpDocumento rdf:type owl:ObjectProperty ;
+                  rdfs:subPropertyOf owl:topObjectProperty ;
+                  rdfs:domain :Usuario ;
+                  rdfs:range :TipoDocumento .
+
+
+###  http://www.semanticweb.org/ProyectoGC/tieneTpRecurso
+:tieneTpRecurso rdf:type owl:ObjectProperty ;
+                rdfs:subPropertyOf owl:topObjectProperty ;
+                rdfs:domain :Recurso ;
+                rdfs:range :TipoRecurso .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.semanticweb.org/ProyectoGC/apellidoUsuario
+:apellidoUsuario rdf:type owl:DatatypeProperty ;
+                 rdfs:subPropertyOf owl:topDataProperty ;
+                 rdfs:domain :Usuario ;
+                 rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ProyectoGC/correoEmpresa
+:correoEmpresa rdf:type owl:DatatypeProperty ;
+               rdfs:subPropertyOf owl:topDataProperty ;
+               rdfs:domain :InfoEmpresa ;
+               rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ProyectoGC/correoUsuario
+:correoUsuario rdf:type owl:DatatypeProperty ;
+               rdfs:subPropertyOf owl:topDataProperty ;
+               rdfs:domain :Usuario ;
+               rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ProyectoGC/costoHorario
+:costoHorario rdf:type owl:DatatypeProperty ;
+              rdfs:subPropertyOf owl:topDataProperty ;
+              rdfs:domain :Horario ;
+              rdfs:range xsd:decimal .
+
+
+###  http://www.semanticweb.org/ProyectoGC/descripcionEmpresa
+:descripcionEmpresa rdf:type owl:DatatypeProperty ;
+                    rdfs:subPropertyOf owl:topDataProperty ;
+                    rdfs:domain :InfoEmpresa ;
+                    rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ProyectoGC/direccionEmpresa
+:direccionEmpresa rdf:type owl:DatatypeProperty ;
+                  rdfs:subPropertyOf owl:topDataProperty ;
+                  rdfs:domain :InfoEmpresa ;
+                  rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ProyectoGC/direccionRecurso
+:direccionRecurso rdf:type owl:DatatypeProperty ;
+                  rdfs:subPropertyOf owl:topDataProperty ;
+                  rdfs:domain :Recurso ;
+                  rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ProyectoGC/documentoUsuario
+:documentoUsuario rdf:type owl:DatatypeProperty ;
+                  rdfs:subPropertyOf owl:topDataProperty ;
+                  rdfs:domain :Usuario ;
+                  rdfs:range xsd:long .
+
+
+###  http://www.semanticweb.org/ProyectoGC/duracionHorario
+:duracionHorario rdf:type owl:DatatypeProperty ;
+                 rdfs:subPropertyOf owl:topDataProperty ;
+                 rdfs:domain :Horario ;
+                 rdfs:range xsd:int .
+
+
+###  http://www.semanticweb.org/ProyectoGC/estadoHorario
+:estadoHorario rdf:type owl:DatatypeProperty ;
+               rdfs:subPropertyOf owl:topDataProperty ;
+               rdfs:domain :Horario ;
+               rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ProyectoGC/estadoRecurso
+:estadoRecurso rdf:type owl:DatatypeProperty ;
+               rdfs:subPropertyOf owl:topDataProperty ;
+               rdfs:domain :Recurso ;
+               rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ProyectoGC/estadoRol
+:estadoRol rdf:type owl:DatatypeProperty ;
+           rdfs:subPropertyOf owl:topDataProperty .
+
+
+###  http://www.semanticweb.org/ProyectoGC/estadoTpDocumento
+:estadoTpDocumento rdf:type owl:DatatypeProperty ;
+                   rdfs:subPropertyOf owl:topDataProperty ;
+                   rdfs:domain :TipoDocumento ;
+                   rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ProyectoGC/estadoUsuario
+:estadoUsuario rdf:type owl:DatatypeProperty ;
+               rdfs:subPropertyOf owl:topDataProperty ;
+               rdfs:domain :Usuario ;
+               rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ProyectoGC/fechaHorario
+:fechaHorario rdf:type owl:DatatypeProperty ;
+              rdfs:subPropertyOf owl:topDataProperty ;
+              rdfs:domain :Horario ;
+              rdfs:range xsd:dateTime .
+
+
+###  http://www.semanticweb.org/ProyectoGC/fechaRegistro
+:fechaRegistro rdf:type owl:DatatypeProperty ;
+               rdfs:subPropertyOf owl:topDataProperty ;
+               rdfs:domain :Reserva ;
+               rdfs:range xsd:dateTime .
+
+
+###  http://www.semanticweb.org/ProyectoGC/horaInicioHorario
+:horaInicioHorario rdf:type owl:DatatypeProperty ;
+                   rdfs:subPropertyOf owl:topDataProperty ;
+                   rdfs:domain :Horario ;
+                   rdfs:range xsd:dateTime .
+
+
+###  http://www.semanticweb.org/ProyectoGC/idDia
+:idDia rdf:type owl:DatatypeProperty ;
+       rdfs:subPropertyOf owl:topDataProperty ;
+       rdf:type owl:FunctionalProperty ;
+       rdfs:domain :Dia ;
+       rdfs:range xsd:int .
+
+
+###  http://www.semanticweb.org/ProyectoGC/idEstadoReserva
+:idEstadoReserva rdf:type owl:DatatypeProperty ;
+                 rdfs:subPropertyOf owl:topDataProperty ;
+                 rdf:type owl:FunctionalProperty ;
+                 rdfs:domain :EstadoReserva ;
+                 rdfs:range xsd:int .
+
+
+###  http://www.semanticweb.org/ProyectoGC/idHorario
+:idHorario rdf:type owl:DatatypeProperty ;
+           rdfs:subPropertyOf owl:topDataProperty ;
+           rdf:type owl:FunctionalProperty ;
+           rdfs:domain :Horario ;
+           rdfs:range xsd:int .
+
+
+###  http://www.semanticweb.org/ProyectoGC/idInfoEmpresa
+:idInfoEmpresa rdf:type owl:DatatypeProperty ;
+               rdfs:subPropertyOf owl:topDataProperty ;
+               rdf:type owl:FunctionalProperty ;
+               rdfs:domain :InfoEmpresa ;
+               rdfs:range xsd:int .
+
+
+###  http://www.semanticweb.org/ProyectoGC/idRecurso
+:idRecurso rdf:type owl:DatatypeProperty ;
+           rdfs:subPropertyOf owl:topDataProperty ;
+           rdf:type owl:FunctionalProperty ;
+           rdfs:domain :Recurso ;
+           rdfs:range xsd:int .
+
+
+###  http://www.semanticweb.org/ProyectoGC/idReserva
+:idReserva rdf:type owl:DatatypeProperty ;
+           rdfs:subPropertyOf owl:topDataProperty ;
+           rdf:type owl:FunctionalProperty ;
+           rdfs:domain :Reserva ;
+           rdfs:range xsd:int .
+
+
+###  http://www.semanticweb.org/ProyectoGC/idRol
+:idRol rdf:type owl:DatatypeProperty ;
+       rdfs:subPropertyOf owl:topDataProperty ;
+       rdf:type owl:FunctionalProperty ;
+       rdfs:domain :Rol ;
+       rdfs:range xsd:int .
+
+
+###  http://www.semanticweb.org/ProyectoGC/idTpDocumento
+:idTpDocumento rdf:type owl:DatatypeProperty ;
+               rdfs:subPropertyOf owl:topDataProperty ;
+               rdf:type owl:FunctionalProperty ;
+               rdfs:domain :TipoDocumento ;
+               rdfs:range xsd:int .
+
+
+###  http://www.semanticweb.org/ProyectoGC/idTpRecurso
+:idTpRecurso rdf:type owl:DatatypeProperty ;
+             rdfs:subPropertyOf owl:topDataProperty ;
+             rdf:type owl:FunctionalProperty ;
+             rdfs:domain :TipoRecurso ;
+             rdfs:range xsd:int .
+
+
+###  http://www.semanticweb.org/ProyectoGC/nombreDia
+:nombreDia rdf:type owl:DatatypeProperty ;
+           rdfs:subPropertyOf owl:topDataProperty ;
+           rdfs:domain :Dia ;
+           rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ProyectoGC/nombreEmpresa
+:nombreEmpresa rdf:type owl:DatatypeProperty ;
+               rdfs:subPropertyOf owl:topDataProperty ;
+               rdfs:domain :InfoEmpresa ;
+               rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ProyectoGC/nombreEstadoReserva
+:nombreEstadoReserva rdf:type owl:DatatypeProperty ;
+                     rdfs:subPropertyOf owl:topDataProperty ;
+                     rdfs:domain :EstadoReserva ;
+                     rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ProyectoGC/nombreRecurso
+:nombreRecurso rdf:type owl:DatatypeProperty ;
+               rdfs:subPropertyOf owl:topDataProperty ;
+               rdfs:domain :Recurso ;
+               rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ProyectoGC/nombreRol
+:nombreRol rdf:type owl:DatatypeProperty ;
+           rdfs:subPropertyOf owl:topDataProperty ;
+           rdfs:domain :Rol ;
+           rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ProyectoGC/nombreTpDocumento
+:nombreTpDocumento rdf:type owl:DatatypeProperty ;
+                   rdfs:subPropertyOf owl:topDataProperty ;
+                   rdfs:domain :TipoDocumento ;
+                   rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ProyectoGC/nombreTpRecurso
+:nombreTpRecurso rdf:type owl:DatatypeProperty ;
+                 rdfs:subPropertyOf owl:topDataProperty ;
+                 rdfs:domain :TipoRecurso ;
+                 rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ProyectoGC/nombreUsuario
+:nombreUsuario rdf:type owl:DatatypeProperty ;
+               rdfs:subPropertyOf owl:topDataProperty ;
+               rdfs:domain :Usuario ;
+               rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ProyectoGC/telefonoEmpresa
+:telefonoEmpresa rdf:type owl:DatatypeProperty ;
+                 rdfs:subPropertyOf owl:topDataProperty ;
+                 rdfs:domain :InfoEmpresa ;
+                 rdfs:range xsd:long .
+
+
+###  http://www.semanticweb.org/ProyectoGC/telefonoUsuario
+:telefonoUsuario rdf:type owl:DatatypeProperty ;
+                 rdfs:subPropertyOf owl:topDataProperty ;
+                 rdfs:domain :Usuario ;
+                 rdfs:range xsd:long .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.semanticweb.org/ProyectoGC/Dia
+:Dia rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/ProyectoGC/EstadoReserva
+:EstadoReserva rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/ProyectoGC/Horario
+:Horario rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/ProyectoGC/InfoEmpresa
+:InfoEmpresa rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/ProyectoGC/Recurso
+:Recurso rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/ProyectoGC/Reserva
+:Reserva rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/ProyectoGC/Rol
+:Rol rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/ProyectoGC/TipoDocumento
+:TipoDocumento rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/ProyectoGC/TipoRecurso
+:TipoRecurso rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/ProyectoGC/Usuario
+:Usuario rdf:type owl:Class .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://www.semanticweb.org/ProyectoGC/EstadoR2
+:EstadoR2 rdf:type owl:NamedIndividual ,
+                 :EstadoReserva ;
+        :idEstadoReserva "2"^^xsd:int ;
+        :nombreEstadoReserva "Activa" .
+
+
+###  http://www.semanticweb.org/ProyectoGC/Rol3
+:Rol3 rdf:type owl:NamedIndividual ,
+                        :Rol ;
+               :estadoRol "Activo" ;
+               :idRol "3"^^xsd:int ;
+               :nombreRol "Administrador" .
+
+
+###  http://www.semanticweb.org/ProyectoGC/TpDoc1
+:TpDoc1 rdf:type owl:NamedIndividual ,
+                 :TipoDocumento ;
+        :estadoTpDocumento "Activo" ;
+        :idTpDocumento "1"^^xsd:int ;
+        :nombreTpDocumento "Cedula" .
+
+
+###  http://www.semanticweb.org/ProyectoGC/Dia1
+:Dia1 rdf:type owl:NamedIndividual ,
+                  :Dia ;
+         :idDia "1"^^xsd:int ;
+         :nombreDia "Domingo" .
+
+
+###  http://www.semanticweb.org/ProyectoGC/Rol2
+:Rol2 rdf:type owl:NamedIndividual ,
+                    :Rol ;
+           :estadoRol "Activo" ;
+           :idRol "2"^^xsd:int ;
+           :nombreRol "Encargado" .
+
+
+###  http://www.semanticweb.org/ProyectoGC/EstadoR1
+:EstadoR1 rdf:type owl:NamedIndividual ,
+                     :EstadoReserva ;
+            :idEstadoReserva "1"^^xsd:int ;
+            :nombreEstadoReserva "Finalizada" .
+
+
+###  http://www.semanticweb.org/ProyectoGC/TpRec2
+:TpRec2 rdf:type owl:NamedIndividual ,
+                 :TipoRecurso ;
+        :idTpRecurso "2"^^xsd:int ;
+        :nombreTpRecurso "Fisico" .
+
+
+###  http://www.semanticweb.org/ProyectoGC/Info1
+:Info1 rdf:type owl:NamedIndividual ,
+                :InfoEmpresa ;
+       :cambiadaPor :User14234 ;
+       :correoEmpresa "reserplus@gmail.com" ;
+       :descripcionEmpresa "Tu sistema gestor de confianza" ;
+       :direccionEmpresa "cra #7" ;
+       :idInfoEmpresa "1"^^xsd:int ;
+       :nombreEmpresa "Reserv+" ;
+       :telefonoEmpresa "3245644567"^^xsd:long .
+
+
+###  http://www.semanticweb.org/ProyectoGC/Dia5
+:Dia5 rdf:type owl:NamedIndividual ,
+                 :Dia ;
+        :idDia "5"^^xsd:int ;
+        :nombreDia "Jueves" .
+
+
+###  http://www.semanticweb.org/ProyectoGC/Dia2
+:Dia2 rdf:type owl:NamedIndividual ,
+                :Dia ;
+       :idDia "2"^^xsd:int ;
+       :nombreDia "Lunes" .
+
+
+###  http://www.semanticweb.org/ProyectoGC/Dia3
+:Dia3 rdf:type owl:NamedIndividual ,
+                 :Dia ;
+        :idDia "3"^^xsd:int ;
+        :nombreDia "Martes" .
+
+
+###  http://www.semanticweb.org/ProyectoGC/Dia4
+:Dia4 rdf:type owl:NamedIndividual ,
+                    :Dia ;
+           :idDia "4"^^xsd:int ;
+           :nombreDia "Miercoles" .
+
+
+###  http://www.semanticweb.org/ProyectoGC/EstadoR3
+:EstadoR3 rdf:type owl:NamedIndividual ,
+                    :EstadoReserva ;
+           :idEstadoReserva "3"^^xsd:int ;
+           :nombreEstadoReserva "No asistió" .
+
+
+###  http://www.semanticweb.org/ProyectoGC/TpDoc3
+:TpDoc3 rdf:type owl:NamedIndividual ,
+                    :TipoDocumento ;
+           :estadoTpDocumento "Activo" ;
+           :idTpDocumento "3"^^xsd:int ;
+           :nombreTpDocumento "Pasaporte" .
+
+
+###  http://www.semanticweb.org/ProyectoGC/TpRec1
+:TpRec1 rdf:type owl:NamedIndividual ,
+                  :TipoRecurso ;
+         :idTpRecurso "1"^^xsd:int ;
+         :nombreTpRecurso "Persona" .
+
+
+###  http://www.semanticweb.org/ProyectoGC/Dia7
+:Dia7 rdf:type owl:NamedIndividual ,
+                 :Dia ;
+        :idDia "7"^^xsd:int ;
+        :nombreDia "Sabado" .
+
+
+###  http://www.semanticweb.org/ProyectoGC/EstadoR4
+:EstadoR4 rdf:type owl:NamedIndividual ,
+                    :EstadoReserva ;
+           :idEstadoReserva "4"^^xsd:int ;
+           :nombreEstadoReserva "Si asistió" .
+
+
+###  http://www.semanticweb.org/ProyectoGC/TpDoc2
+:TpDoc2 rdf:type owl:NamedIndividual ,
+                           :TipoDocumento ;
+                  :estadoTpDocumento "Activo" ;
+                  :idTpDocumento "2"^^xsd:int ;
+                  :nombreTpDocumento "Tarjeta identidad" .
+
+
+###  http://www.semanticweb.org/ProyectoGC/User14234
+:User14234 rdf:type owl:NamedIndividual ,
+                    :Usuario ;
+           :tieneRol :Rol3 ;
+           :tieneTpDocumento :TpDoc1 ;
+           :apellidoUsuario "Villegas" ;
+           :correoUsuario "yan@gmail.com" ;
+           :documentoUsuario 14234 ;
+           :estadoUsuario "Activo" ;
+           :nombreUsuario "Yan" ;
+           :telefonoUsuario 323454 .
+
+
+###  http://www.semanticweb.org/ProyectoGC/Rol1
+:Rol1 rdf:type owl:NamedIndividual ,
+                  :Rol ;
+         :estadoRol "Activo" ;
+         :idRol "1"^^xsd:int ;
+         :nombreRol "Usuario" .
+
+
+###  http://www.semanticweb.org/ProyectoGC/Dia6
+:Dia6 rdf:type owl:NamedIndividual ,
+                  :Dia ;
+         :idDia "6"^^xsd:int ;
+         :nombreDia "Viernes" .
+
+
+#################################################################
+#    General axioms
+#################################################################
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( :Dia
+                :EstadoReserva
+                :Horario
+                :InfoEmpresa
+                :Recurso
+                :Reserva
+                :Rol
+                :TipoDocumento
+                :TipoRecurso
+                :Usuario
+              )
+] .
+
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi
