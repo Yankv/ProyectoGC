@@ -1,5 +1,5 @@
 # Proyecto_WEB
-Sistema de gestión de reservas, profecto final programación WEB.
+Sistema de gestión de reservas, profecto final Gestión del conocimiento.
 
 ## Librearias usadas 
 
